@@ -1,0 +1,383 @@
+/* ==========================================================================
+   game.css — gameplay page: board, scoreboard, turn banner, victory overlay
+   ========================================================================== */
+
+/* -------------------------------------------------------------------- */
+/* header controls (shared look with the landing header, plus extras)    */
+/* -------------------------------------------------------------------- */
+
+.game-header__controls {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: var(--border-w) solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: var(--hard-shadow-sm);
+  transition: transform .15s ease, background-color .2s ease;
+}
+.icon-btn:hover { transform: translate(-1px, -1px); }
+.icon-btn:active { transform: translate(1px, 1px); box-shadow: none; }
+.icon-btn svg { width: 1.2rem; height: 1.2rem; }
+.icon-btn .icon-sound-off { display: none; }
+.icon-btn.is-muted .icon-sound-on { display: none; }
+.icon-btn.is-muted .icon-sound-off { display: block; }
+
+/* -------------------------------------------------------------------- */
+/* page layout                                                           */
+/* -------------------------------------------------------------------- */
+
+.game-page__inner {
+  padding-block: 2.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* game shell — keeps the entire game page inside one screen, no scroll  */
+/* -------------------------------------------------------------------- */
+
+.game-shell {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.game-shell .site-header {
+  flex: none;
+}
+
+.game-shell main.game-page {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+
+.game-shell .game-page__inner {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  justify-content: space-between;
+  gap: clamp(.5rem, 2vh, 1.75rem);
+  padding-block: clamp(.6rem, 2.5vh, 2.5rem) clamp(.6rem, 2.5vh, 2rem);
+}
+
+.game-shell .game-meta,
+.game-shell .game-controls {
+  flex: none;
+  width: 100%;
+}
+
+.game-shell .board-wrap {
+  flex: 1 1 auto;
+  min-height: 120px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.board-wrap.is-ai-turn {
+  pointer-events: none;
+}
+.board-wrap.is-ai-turn .ultimate-board--game {
+  opacity: .85;
+}
+
+/* -------------------------------------------------------------------- */
+/* meta row: mode / difficulty badges + scoreboard                       */
+/* -------------------------------------------------------------------- */
+
+.game-meta {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.game-meta__row {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  padding: .4rem .85rem;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.badge--muted { background: var(--bg-alt); color: var(--ink-soft); }
+.badge strong { color: var(--ink); font-weight: 600; }
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: .75rem;
+  width: 100%;
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  box-shadow: var(--hard-shadow-sm);
+  padding: 1rem 1.1rem;
+}
+
+.scoreboard__item {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  min-width: 0;
+}
+.scoreboard__item--o { justify-content: flex-end; text-align: right; }
+.scoreboard__item--draw {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  color: var(--ink-soft);
+  border-inline: 2px dashed var(--line);
+  padding-inline: .9rem;
+}
+.scoreboard__item--draw strong { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); }
+
+.scoreboard__icon {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+.scoreboard__icon svg { width: 65%; height: 65%; }
+
+.scoreboard__name {
+  font-size: .85rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scoreboard__score {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* -------------------------------------------------------------------- */
+/* turn banner                                                           */
+/* -------------------------------------------------------------------- */
+
+.turn-banner {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--font-mono);
+  font-size: .95rem;
+  padding: .55rem 1.1rem;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-alt);
+}
+
+.turn-dot {
+  width: .65rem;
+  height: .65rem;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  flex: none;
+}
+.turn-dot--x { background: var(--x-color); }
+.turn-dot--o { background: var(--o-color); }
+
+.ai-thinking {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  color: var(--ink-soft);
+}
+.ai-thinking::before {
+  content: "";
+  width: .4rem;
+  height: .4rem;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  animation: glow-pulse 1s ease-in-out infinite;
+}
+
+/* -------------------------------------------------------------------- */
+/* the interactive 9x9 board                                             */
+/* -------------------------------------------------------------------- */
+
+.board-wrap { position: relative; width: 100%; display: grid; place-items: center; }
+
+.ultimate-board--game {
+  --cell: 3.4rem;
+  position: relative;
+  transform: none;
+  width: min(600px, 100%);
+  gap: .85rem;
+  padding: .85rem;
+}
+
+.ultimate-board--game .local-board {
+  position: relative;
+  gap: 6px;
+  padding: 8px;
+  transition: box-shadow .25s ease, background-color .25s ease, opacity .2s ease;
+}
+
+.ultimate-board--game .local-board--active {
+  animation: glow-pulse 2.2s ease-in-out infinite;
+}
+
+.ultimate-board--game .local-board--disabled {
+  opacity: .55;
+}
+
+.ultimate-board--game .local-board--won-x,
+.ultimate-board--game .local-board--won-o,
+.ultimate-board--game .local-board--draw {
+  position: relative;
+}
+
+.ultimate-board--game .local-board--draw { background: var(--bg-alt); }
+
+.ultimate-board--game .cell {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background-color .15s ease, transform .1s ease;
+}
+.ultimate-board--game .cell:not(:disabled):hover { background: var(--bg-alt); }
+.ultimate-board--game .cell:not(:disabled):active { transform: scale(.94); }
+.ultimate-board--game .cell:disabled { cursor: default; }
+.ultimate-board--game .local-board--disabled .cell,
+.ultimate-board--game .local-board--won-x .cell,
+.ultimate-board--game .local-board--won-o .cell,
+.ultimate-board--game .local-board--draw .cell {
+  cursor: not-allowed;
+}
+
+.mark { width: 100%; height: 100%; }
+
+/* Big status stamp shown over a decided local board. */
+.local-board__stamp {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .2s ease, transform .25s var(--ease-pop);
+}
+.local-board--won-x .local-board__stamp,
+.local-board--won-o .local-board__stamp,
+.local-board--draw .local-board__stamp {
+  opacity: 1;
+  transform: scale(1);
+}
+.local-board__stamp svg { width: 55%; height: 55%; filter: drop-shadow(2px 2px 0 var(--paper)); }
+.local-board__draw-mark {
+  display: block;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  opacity: .5;
+}
+
+.ultimate-board--won { position: relative; }
+
+/* -------------------------------------------------------------------- */
+/* controls under the board                                              */
+/* -------------------------------------------------------------------- */
+
+.game-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* -------------------------------------------------------------------- */
+/* victory / draw overlay                                                */
+/* -------------------------------------------------------------------- */
+
+.victory-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--ink) 55%, transparent);
+  padding: 1.5rem;
+}
+
+.victory-overlay[hidden] {
+  display: none;
+}
+
+.victory-card {
+  width: min(420px, 100%);
+  text-align: center;
+  background: var(--paper);
+  border: var(--border-w-lg) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--hard-shadow);
+  padding: 2.4rem 2rem 2rem;
+}
+
+.victory-card__icon {
+  width: 4.5rem;
+  height: 4.5rem;
+  margin-inline: auto;
+  margin-bottom: 1rem;
+  display: grid;
+  place-items: center;
+}
+.victory-card__icon svg { width: 100%; height: 100%; }
+
+.victory-card h2 { font-size: 1.8rem; margin-bottom: .5rem; }
+.victory-card p { color: var(--ink-soft); margin-bottom: 1.8rem; }
+
+.victory-card__actions {
+  display: flex;
+  gap: .9rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.draw-face {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  color: var(--ink-soft);
+  letter-spacing: .3em;
+}

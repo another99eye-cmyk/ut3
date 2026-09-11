@@ -46,11 +46,26 @@
       return safeSet("settings", settings);
     },
 
+    getSoundOn: function () {
+      return safeGet("sound", true);
+    },
+    setSoundOn: function (on) {
+      return safeSet("sound", on);
+    },
+
     getStats: function () {
       return safeGet("stats", { xWins: 0, oWins: 0, draws: 0 });
     },
     setStats: function (stats) {
       return safeSet("stats", stats);
+    },
+    recordResult: function (winner) {
+      var stats = TTTStorage.getStats();
+      if (winner === "X") stats.xWins++;
+      else if (winner === "O") stats.oWins++;
+      else stats.draws++;
+      TTTStorage.setStats(stats);
+      return stats;
     }
   };
 

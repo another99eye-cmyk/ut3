@@ -34,6 +34,33 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes board-enter {
+  from { opacity: 0; transform: scale(.85) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes board-celebrate {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.05) rotate(-1deg); }
+  65% { transform: scale(1.03) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(240px) translateX(var(--drift, 0px)) rotate(var(--rot, 180deg)); opacity: 0; }
+}
+
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes overlay-card-in {
+  from { opacity: 0; transform: scale(.9) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 /* -------------------------------------------------------------------- */
 /* applied classes                                                      */
 /* -------------------------------------------------------------------- */
@@ -58,6 +85,26 @@
 [data-reveal-group] > * { transition-delay: calc(var(--i, 0) * 90ms); }
 
 .shake { animation: shake .4s; }
+
+.local-board--enter { animation: board-enter .32s var(--ease-pop, ease) both; }
+.local-board--celebrate { animation: board-celebrate .5s ease; }
+
+.confetti-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; }
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 7px;
+  height: 12px;
+  background: var(--c, var(--accent));
+  border: 1.5px solid var(--line);
+  border-radius: 2px;
+  transform: rotate(var(--rot, 0deg));
+  animation: confetti-fall var(--dur, 1.5s) var(--delay, 0s) ease-in forwards;
+}
+
+.victory-overlay { animation: none; }
+.victory-overlay--show { animation: overlay-fade-in .2s ease both; }
+.victory-overlay--show .victory-card { animation: overlay-card-in .3s var(--ease-pop, ease) both; }
 
 .logo__mark svg { transition: transform .3s ease; }
 .logo:hover .logo__mark svg { animation: spin-slow 1.4s linear; }

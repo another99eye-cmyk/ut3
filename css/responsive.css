@@ -8,6 +8,8 @@
   .ultimate-board { width: min(360px, 100%); transform: rotate(-2deg); }
   .steps { grid-template-columns: 1fr 1fr; row-gap: 3rem; }
   .steps__thread { display: none; }
+
+  .ultimate-board--game { --cell: 3rem; }
 }
 
 @media (max-width: 720px) {
@@ -26,9 +28,25 @@
   .mode-card__pieces { position: static; margin-bottom: 1rem; }
 
   .site-footer__bar { flex-direction: column; align-items: flex-start; }
+
+  .game-header__controls .btn { padding: .6rem 1rem; font-size: .85rem; }
+  .ultimate-board--game { --cell: 2.5rem; gap: .6rem; padding: .6rem; }
+  .ultimate-board--game .local-board { gap: 4px; padding: 5px; }
+  .scoreboard { grid-template-columns: 1fr auto 1fr; padding: .8rem; gap: .4rem; }
+  .scoreboard__name { font-size: .72rem; }
+  .scoreboard__score { font-size: 1.15rem; }
+  .scoreboard__icon { width: 1.6rem; height: 1.6rem; }
+  .turn-banner { font-size: .85rem; text-align: center; }
+  .victory-card { padding: 2rem 1.4rem 1.6rem; }
 }
 
 @media (max-width: 420px) {
   .ultimate-board { --cell: 2rem; padding: .45rem; gap: .45rem; }
   .btn { padding: .85rem 1.3rem; font-size: .88rem; }
+
+  .ultimate-board--game { --cell: 2.1rem; gap: .45rem; padding: .45rem; }
+  .ultimate-board--game .local-board { gap: 3px; padding: 4px; }
+  .scoreboard__item--draw { padding-inline: .5rem; }
+  .game-controls { flex-direction: column; width: 100%; }
+  .game-controls .btn { width: 100%; justify-content: center; }
 }
