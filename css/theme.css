@@ -1,0 +1,61 @@
+/* ==========================================================================
+   theme.css — design tokens, fonts, light/dark palettes
+   ========================================================================== */
+
+:root {
+  /* -- type -- */
+  --font-display: "Fredoka", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* -- light theme (default) -- */
+  --bg: #eaf6f4;
+  --bg-alt: #dff0ee;
+  --paper: #ffffff;
+  --ink: #14171a;
+  --ink-soft: #4a5257;
+  --line: #14171a;
+
+  --x-color: #ff5c7a;
+  --x-color-soft: #ffd9e1;
+  --o-color: #7c5cff;
+  --o-color-soft: #e3dbff;
+  --accent: #ffd23f;
+  --accent-ink: #14171a;
+
+  --shadow-color: 20 23 26;
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+
+  --border-w: 3px;
+  --border-w-lg: 4px;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #14171a;
+  --bg-alt: #1b1f23;
+  --paper: #1e2226;
+  --ink: #f3f7f6;
+  --ink-soft: #b9c2c4;
+  --line: #f3f7f6;
+
+  --x-color: #ff7b93;
+  --x-color-soft: #3a2129;
+  --o-color: #a690ff;
+  --o-color-soft: #2a2440;
+  --accent: #ffd23f;
+  --accent-ink: #14171a;
+
+  --shadow-color: 0 0 0;
+
+  color-scheme: dark;
+}
+
+/* shared surface + border shorthand used across components */
+:root, [data-theme="dark"] {
+  --hard-shadow: 6px 6px 0 rgb(var(--shadow-color) / 1);
+  --hard-shadow-sm: 4px 4px 0 rgb(var(--shadow-color) / 1);
+}

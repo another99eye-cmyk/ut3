@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>T³ — Ultimate Tic-Tac-Toe</title>
+<meta name="description" content="A tic-tac-toe board made of tic-tac-toe boards. Play a friend or an AI across three difficulty levels." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="css/theme.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/animation.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+<!-- reusable piece glyphs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="glyph-x" viewBox="0 0 40 40">
+    <path d="M8 8 L32 32 M32 8 L8 32" stroke="var(--x-color)" stroke-width="6.5" stroke-linecap="round" fill="none"/>
+  </symbol>
+  <symbol id="glyph-o" viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="12.5" stroke="var(--o-color)" stroke-width="6.5" fill="none"/>
+  </symbol>
+</svg>
+
+<a class="visually-hidden" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap site-header__bar">
+    <a class="logo" href="#top" aria-label="T-cubed, Ultimate Tic-Tac-Toe home">
+      <span class="logo__mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><use href="#glyph-x"/></svg>
+      </span>
+      T³
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#how-it-works">How to play</a>
+      <a href="#play">Modes</a>
+      <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>
+        </svg>
+      </button>
+      <a class="btn btn--primary" href="pages/game.html">Play now</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============================================================ -->
+  <!-- HERO                                                          -->
+  <!-- ============================================================ -->
+  <section class="hero" id="top">
+    <div class="sticker-field" aria-hidden="true">
+      <svg class="sticker" style="top:14%; left:6%; width:2.6rem; --r:-10deg" viewBox="0 0 40 40"><use href="#glyph-o"/></svg>
+      <svg class="sticker" style="top:68%; left:3%; width:2rem; --r:8deg" viewBox="0 0 40 40"><use href="#glyph-x"/></svg>
+      <svg class="sticker" style="top:8%; left:46%; width:1.8rem; --r:14deg" viewBox="0 0 40 40"><use href="#glyph-x"/></svg>
+      <svg class="sticker" style="top:80%; left:52%; width:2.2rem; --r:-14deg" viewBox="0 0 40 40"><use href="#glyph-o"/></svg>
+    </div>
+
+    <div class="wrap hero__grid">
+      <div>
+        <p class="hero__eyebrow">nine boards. one winner.</p>
+        <h1 class="hero__title">
+          Win the square.<br />
+          Win the board.<br />
+          Win the <span class="hl-x">whole</span> <span class="hl-o">thing</span>.
+        </h1>
+        <p class="hero__lede">
+          Ultimate Tic-Tac-Toe is the same game you know, nested nine times over.
+          Every move you make sends your opponent to a specific board — so the
+          square you pick matters as much as the line you're building.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="pages/game.html">Play now</a>
+          <a class="btn" href="#how-it-works">How it works</a>
+        </div>
+        <p class="hero__note">No account, no download — just open a board and go.</p>
+      </div>
+
+      <div class="hero__board-stage">
+        <div class="ultimate-board" role="img" aria-label="Decorative preview of the nested Ultimate Tic-Tac-Toe board">
+          <!-- board 1 -->
+          <div class="local-board">
+            <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+            <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+          </div>
+          <!-- board 2 : won by X -->
+          <div class="local-board local-board--won-x">
+            <div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+            <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
+          </div>
+          <!-- board 3 -->
+          <div class="local-board">
+            <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div>
+            <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+            <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+          </div>
+          <!-- board 4 -->
+          <div class="local-board">
+            <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          </div>
+          <!-- board 5 : active -->
+          <div class="local-board local-board--active">
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          </div>
+          <!-- board 6 -->
+          <div class="local-board">
+            <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+            <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          </div>
+          <!-- board 7 -->
+          <div class="local-board">
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          </div>
+          <!-- board 8 : won by O -->
+          <div class="local-board local-board--won-o">
+            <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+            <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+            <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+          </div>
+          <!-- board 9 -->
+          <div class="local-board">
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+            <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- HOW IT WORKS                                                  -->
+  <!-- ============================================================ -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="wrap section">
+      <div class="section__head" data-reveal>
+        <h2>Three rules, one twist</h2>
+        <p>If you can play regular tic-tac-toe, you already know 90% of this. Here's the part that changes everything.</p>
+      </div>
+
+      <div class="steps" data-reveal-group>
+        <div class="steps__thread" aria-hidden="true"></div>
+
+        <div class="step" data-reveal>
+          <div class="step__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </div>
+          <h3>Place in any square</h3>
+          <p>Each of the 9 small boards works like normal tic-tac-toe — claim squares to build a line of three.</p>
+        </div>
+
+        <div class="step" data-reveal>
+          <div class="step__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12h13M13 6l6 6-6 6"/>
+            </svg>
+          </div>
+          <h3>Your move sends them</h3>
+          <p>Wherever you play inside a board, your opponent must play in the matching board next — position 3 sends them to board 3.</p>
+        </div>
+
+        <div class="step" data-reveal>
+          <div class="step__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 21h8M12 17v4M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
+              <path d="M6 5H3v2a4 4 0 0 0 4 4M18 5h3v2a4 4 0 0 1-4 4"/>
+            </svg>
+          </div>
+          <h3>Win boards to win the game</h3>
+          <p>If that board is already won or full, they choose freely. Take three local boards in a row to win it all.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MODE PICKER                                                   -->
+  <!-- ============================================================ -->
+  <section class="mode-picker" id="play">
+    <div class="wrap">
+      <div class="section__head" data-reveal>
+        <h2>Pick how you're playing</h2>
+        <p>Choose a mode below — your pick is saved, and carries straight into the board.</p>
+      </div>
+
+      <div class="mode-cards" data-reveal-group>
+        <div class="mode-card" data-mode="two-player" role="button" tabindex="0" aria-pressed="false" data-reveal>
+          <div class="mode-card__pieces" aria-hidden="true">
+            <svg><use href="#glyph-x"/></svg><svg><use href="#glyph-o"/></svg>
+          </div>
+          <span class="mode-card__badge">local · 2 players</span>
+          <h3>Two Player</h3>
+          <p>Pass the same device back and forth. X and O both played by humans.</p>
+        </div>
+
+        <div class="mode-card" data-mode="ai" role="button" tabindex="0" aria-pressed="false" data-reveal>
+          <div class="mode-card__pieces" aria-hidden="true">
+            <svg><use href="#glyph-x"/></svg>
+          </div>
+          <span class="mode-card__badge">vs computer</span>
+          <h3>Play the AI</h3>
+          <p>You're X, the computer is O. Pick a difficulty to match your level.</p>
+
+          <div class="difficulty-panel">
+            <div class="difficulty-panel__inner">
+              <div class="chip-row" role="group" aria-label="AI difficulty">
+                <button type="button" class="chip" data-difficulty="easy" aria-pressed="false">Easy</button>
+                <button type="button" class="chip" data-difficulty="medium" aria-pressed="false">Medium</button>
+                <button type="button" class="chip" data-difficulty="hard" aria-pressed="false">Hard</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mode-picker__cta">
+        <a class="btn btn--primary" href="pages/game.html?mode=two-player">Start game</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap site-footer__bar">
+    <span>T³ — Ultimate Tic-Tac-Toe</span>
+    <span>Built with HTML, CSS &amp; vanilla JS. No frameworks were harmed.</span>
+  </div>
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/animation.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

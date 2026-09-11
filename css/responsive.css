@@ -1,0 +1,34 @@
+/* ==========================================================================
+   responsive.css — tablet + mobile layout adjustments
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .hero__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .hero__board-stage { order: -1; }
+  .ultimate-board { width: min(360px, 100%); transform: rotate(-2deg); }
+  .steps { grid-template-columns: 1fr 1fr; row-gap: 3rem; }
+  .steps__thread { display: none; }
+}
+
+@media (max-width: 720px) {
+  .wrap { width: min(680px, 100% - 2rem); }
+
+  .site-nav { gap: 1rem; }
+  .site-nav a:not(.btn) { display: none; }
+
+  .hero { padding-block: 3rem 3.5rem; }
+  .hero__title { font-size: clamp(2.2rem, 8vw, 2.8rem); }
+  .hero__actions { gap: .8rem; }
+
+  .steps { grid-template-columns: 1fr; }
+
+  .mode-cards { grid-template-columns: 1fr; }
+  .mode-card__pieces { position: static; margin-bottom: 1rem; }
+
+  .site-footer__bar { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 420px) {
+  .ultimate-board { --cell: 2rem; padding: .45rem; gap: .45rem; }
+  .btn { padding: .85rem 1.3rem; font-size: .88rem; }
+}
