@@ -376,7 +376,6 @@ button { font-family: inherit; cursor: pointer; }
   top: 1.6rem;
   right: 1.6rem;
   display: flex;
-  gap: -.4rem;
 }
 .mode-card__pieces svg { width: 2rem; height: 2rem; }
 .mode-card__pieces svg:last-child { margin-left: -.6rem; }

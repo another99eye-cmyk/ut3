@@ -46,9 +46,20 @@
         c.setAttribute("aria-pressed", String(c === card));
       });
       settings.mode = card.dataset.mode;
-      if (card.dataset.mode !== "ai") settings.difficulty = null;
+      if (card.dataset.mode !== "ai") {
+        settings.difficulty = null;
+      } else if (!settings.difficulty) {
+        settings.difficulty = "medium";
+      }
       window.TTTStorage.setSettings(settings);
+      syncDifficultyChips();
       updateCta();
+    }
+
+    function syncDifficultyChips() {
+      chips.forEach(function (c) {
+        c.setAttribute("aria-pressed", String(c.dataset.difficulty === settings.difficulty));
+      });
     }
 
     cards.forEach(function (card) {
@@ -73,20 +84,16 @@
       });
     });
 
-    // restore previous selection, if any
+    // restore previous selection, if any (selectCard also syncs the chip row)
     var savedCard = document.querySelector('.mode-card[data-mode="' + settings.mode + '"]');
     if (savedCard) selectCard(savedCard);
-    if (settings.difficulty) {
-      var savedChip = document.querySelector('.chip[data-difficulty="' + settings.difficulty + '"]');
-      if (savedChip) savedChip.setAttribute("aria-pressed", "true");
-    }
 
     function updateCta() {
       var cta = document.querySelector(".mode-picker__cta a");
       if (!cta) return;
       var params = new URLSearchParams();
       params.set("mode", settings.mode);
-      if (settings.mode === "ai") params.set("difficulty", settings.difficulty || "easy");
+      if (settings.mode === "ai") params.set("difficulty", settings.difficulty || "medium");
       cta.href = "pages/game.html?" + params.toString();
     }
   }

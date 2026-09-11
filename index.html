@@ -6,6 +6,18 @@
 <title>T³ — Ultimate Tic-Tac-Toe</title>
 <meta name="description" content="A tic-tac-toe board made of tic-tac-toe boards. Play a friend or an AI across three difficulty levels." />
 
+<script>
+  // Set the theme before any CSS paints, so there's no flash of the wrong theme.
+  (function () {
+    try {
+      var raw = window.localStorage.getItem("ultimateTTT:theme");
+      var stored = raw ? JSON.parse(raw) : null;
+      var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) { /* localStorage unavailable, default styles apply */ }
+  })();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -49,7 +61,7 @@
           <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>
         </svg>
       </button>
-      <a class="btn btn--primary" href="pages/game.html">Play now</a>
+      <a class="btn btn--primary" href="#play">Play now</a>
     </nav>
   </div>
 </header>
@@ -81,7 +93,7 @@
           square you pick matters as much as the line you're building.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="pages/game.html">Play now</a>
+          <a class="btn btn--primary" href="#play">Play now</a>
           <a class="btn" href="#how-it-works">How it works</a>
         </div>
         <p class="hero__note">No account, no download — just open a board and go.</p>
