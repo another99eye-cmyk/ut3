@@ -47,7 +47,7 @@
       <span class="logo__mark" aria-hidden="true">
         <svg viewBox="0 0 40 40"><use href="#glyph-x"/></svg>
       </span>
-      T³
+      XT³
     </a>
     <nav class="site-nav" aria-label="Primary">
       <a href="#how-it-works">How to play</a>
@@ -161,6 +161,56 @@
   </section>
 
   <!-- ============================================================ -->
+  <!-- WIN BOARD                                                     -->
+  <!-- ============================================================ -->
+  <section class="win-board" id="win-board" aria-label="Match history">
+    <div class="wrap section" style="padding-block:3rem;">
+      <div class="section__head" data-reveal>
+        <h2>Scoreboard</h2>
+        <p>Tracked automatically as you play. Nothing here resets just from coming back to this page.</p>
+      </div>
+
+      <div class="win-board__grid" data-reveal-group>
+        <div class="win-board__card" data-reveal>
+          <span class="mode-card__badge">two player</span>
+          <div class="win-board__row">
+            <div class="win-board__col">
+              <span class="win-board__label">Player 1</span>
+              <strong class="win-board__score" id="wb-p1">0</strong>
+            </div>
+            <div class="win-board__col win-board__col--draw">
+              <span class="win-board__label">Draws</span>
+              <strong class="win-board__score" id="wb-tp-draws">0</strong>
+            </div>
+            <div class="win-board__col">
+              <span class="win-board__label">Player 2</span>
+              <strong class="win-board__score" id="wb-p2">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="win-board__card" data-reveal>
+          <span class="mode-card__badge">vs computer</span>
+          <div class="win-board__row">
+            <div class="win-board__col">
+              <span class="win-board__label">Player</span>
+              <strong class="win-board__score" id="wb-player">0</strong>
+            </div>
+            <div class="win-board__col win-board__col--draw">
+              <span class="win-board__label">Draws</span>
+              <strong class="win-board__score" id="wb-ai-draws">0</strong>
+            </div>
+            <div class="win-board__col">
+              <span class="win-board__label">AI</span>
+              <strong class="win-board__score" id="wb-ai">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
   <!-- HOW IT WORKS                                                  -->
   <!-- ============================================================ -->
   <section class="how-it-works" id="how-it-works">
@@ -234,11 +284,15 @@
           </div>
           <span class="mode-card__badge">vs computer</span>
           <h3>Play the AI</h3>
-          <p>You're X, the computer is O. Pick a difficulty to match your level.</p>
+          <p>Choose your side, then pick a difficulty to match your level.</p>
 
           <div class="difficulty-panel">
             <div class="difficulty-panel__inner">
-              <div class="chip-row" role="group" aria-label="AI difficulty">
+              <div class="chip-row" role="group" aria-label="Play as">
+                <button type="button" class="chip" data-symbol="X" aria-pressed="true">Play as X</button>
+                <button type="button" class="chip" data-symbol="O" aria-pressed="false">Play as O</button>
+              </div>
+              <div class="chip-row chip-row--difficulty" role="group" aria-label="AI difficulty">
                 <button type="button" class="chip" data-difficulty="easy" aria-pressed="false">Easy</button>
                 <button type="button" class="chip" data-difficulty="medium" aria-pressed="false">Medium</button>
                 <button type="button" class="chip" data-difficulty="hard" aria-pressed="false">Hard</button>

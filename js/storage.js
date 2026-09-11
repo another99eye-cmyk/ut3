@@ -31,19 +31,19 @@
     }
   }
 
+  function defaultStats() {
+    return {
+      twoPlayer: { p1Wins: 0, p2Wins: 0, draws: 0 },
+      ai: { playerWins: 0, aiWins: 0, draws: 0 }
+    };
+  }
+
   var TTTStorage = {
     getTheme: function () {
       return safeGet("theme", null); // "light" | "dark" | null (=> follow system)
     },
     setTheme: function (theme) {
       return safeSet("theme", theme);
-    },
-
-    getSettings: function () {
-      return safeGet("settings", { mode: "two-player", difficulty: null });
-    },
-    setSettings: function (settings) {
-      return safeSet("settings", settings);
     },
 
     getSoundOn: function () {
@@ -53,17 +53,64 @@
       return safeSet("sound", on);
     },
 
+    /* mode: "two-player" | "ai"
+       difficulty: "easy" | "medium" | "hard" | null
+       playerSymbol: "X" | "O" — the human's chosen symbol in AI mode,
+       picked on the landing page's AI card and fixed for the match. */
+    getSettings: function () {
+      var s = safeGet("settings", null) || {};
+      return {
+        mode: s.mode || "two-player",
+        difficulty: s.difficulty || null,
+        playerSymbol: s.playerSymbol === "O" ? "O" : "X"
+      };
+    },
+    setSettings: function (settings) {
+      return safeSet("settings", settings);
+    },
+
+    /* Which symbol Player 1 holds for the *next* two-player match. Starts
+       at "X" and flips every time a two-player match finishes, so symbols
+       alternate automatically without a trip back to the landing page. */
+    getTwoPlayerStartSymbol: function () {
+      var v = safeGet("twoPlayerStartSymbol", "X");
+      return v === "O" ? "O" : "X";
+    },
+    setTwoPlayerStartSymbol: function (symbol) {
+      return safeSet("twoPlayerStartSymbol", symbol === "O" ? "O" : "X");
+    },
+    toggleTwoPlayerStartSymbol: function () {
+      var next = TTTStorage.getTwoPlayerStartSymbol() === "X" ? "O" : "X";
+      TTTStorage.setTwoPlayerStartSymbol(next);
+      return next;
+    },
+
+    /* Stats are tracked per player/role, not per symbol, so they stay
+       correct even though symbols swap (two player) or are chosen
+       freely (AI mode). */
     getStats: function () {
-      return safeGet("stats", { xWins: 0, oWins: 0, draws: 0 });
+      var s = safeGet("stats", null);
+      if (!s || !s.twoPlayer || !s.ai) return defaultStats();
+      return s;
     },
     setStats: function (stats) {
       return safeSet("stats", stats);
     },
-    recordResult: function (winner) {
+
+    /** bucket: "twoPlayer" | "ai"
+     *  outcome: "twoPlayer" bucket -> "p1" | "p2" | "draw"
+     *           "ai" bucket       -> "player" | "ai" | "draw" */
+    recordResult: function (bucket, outcome) {
       var stats = TTTStorage.getStats();
-      if (winner === "X") stats.xWins++;
-      else if (winner === "O") stats.oWins++;
-      else stats.draws++;
+      if (bucket === "ai") {
+        if (outcome === "player") stats.ai.playerWins++;
+        else if (outcome === "ai") stats.ai.aiWins++;
+        else stats.ai.draws++;
+      } else {
+        if (outcome === "p1") stats.twoPlayer.p1Wins++;
+        else if (outcome === "p2") stats.twoPlayer.p2Wins++;
+        else stats.twoPlayer.draws++;
+      }
       TTTStorage.setStats(stats);
       return stats;
     }

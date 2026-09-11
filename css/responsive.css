@@ -25,6 +25,7 @@
   .steps { grid-template-columns: 1fr; }
 
   .mode-cards { grid-template-columns: 1fr; }
+  .win-board__grid { grid-template-columns: 1fr; }
   .mode-card__pieces { position: static; margin-bottom: 1rem; }
 
   .site-footer__bar { flex-direction: column; align-items: flex-start; }

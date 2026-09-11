@@ -395,6 +395,7 @@ button { font-family: inherit; cursor: pointer; }
   padding-top: .3rem;
   flex-wrap: wrap;
 }
+.chip-row--difficulty { margin-top: .6rem; }
 
 .chip {
   font-family: var(--font-mono);
@@ -415,6 +416,54 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   justify-content: center;
   margin-top: 2.75rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* win board (landing page match history)                                */
+/* -------------------------------------------------------------------- */
+
+.win-board__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.win-board__card {
+  background: var(--paper);
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 1.3rem 1.4rem 1.5rem;
+  box-shadow: var(--hard-shadow-sm);
+}
+
+.win-board__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.win-board__col {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.win-board__col--draw {
+  align-items: center;
+  border-inline: 2px dashed var(--line);
+  padding-inline: 1rem;
+}
+
+.win-board__label {
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  color: var(--ink-soft);
+}
+
+.win-board__score {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
 /* -------------------------------------------------------------------- */

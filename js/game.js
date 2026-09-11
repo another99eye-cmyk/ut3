@@ -159,8 +159,22 @@ window.TTTGame = window.TTTGame || {};
   var mode = params.get("mode") || settings.mode || "two-player";
   var difficulty = params.get("difficulty") || settings.difficulty || "medium";
 
+  // AI mode: the human's symbol is chosen on the landing page's AI card and
+  // is fixed for the whole match — there is no control to change it here.
+  var humanSymbol = (params.get("symbol") || settings.playerSymbol || "X") === "O" ? "O" : "X";
+  var aiSymbol = humanSymbol === "X" ? "O" : "X";
+
+  // Two player mode: symbols are never chosen manually. Player 1's symbol
+  // for *this* match comes from storage and automatically alternates after
+  // every completed match (see endGame()).
+  var p1Symbol = window.TTTStorage.getTwoPlayerStartSymbol();
+
   var engine = new GameEngine();
-  var aiThinking = false; // reserved for ai.js; unused while AI mode is a stub
+  var aiThinking = false;
+  var aiTimeoutId = null;
+  var paused = false;
+  var history = [];   // snapshots, most-recent last
+  var redoStack = []; // snapshots popped off history by undo(), most-recent last
 
   var boardWrapEl = document.querySelector(".board-wrap");
 
@@ -176,38 +190,70 @@ window.TTTGame = window.TTTGame || {};
     nameX: document.getElementById("player-x-name"),
     nameO: document.getElementById("player-o-name"),
     restartBtn: document.getElementById("restart-btn"),
-    menuBtn: document.getElementById("menu-btn"),
+    undoBtn: document.getElementById("undo-btn"),
+    redoBtn: document.getElementById("redo-btn"),
+    pauseBtn: document.getElementById("pause-btn"),
+    bottomNav: document.getElementById("bottom-nav"),
     soundToggle: document.getElementById("sound-toggle"),
     themeToggle: document.querySelector(".theme-toggle"),
-    aiThinkingEl: document.getElementById("ai-thinking"),
     overlay: document.getElementById("victory-overlay"),
     overlayIcon: document.getElementById("victory-icon"),
     overlayTitle: document.getElementById("victory-title"),
     overlaySub: document.getElementById("victory-sub"),
     rematchBtn: document.getElementById("rematch-btn"),
     mainMenuBtn: document.getElementById("main-menu-btn"),
+    pauseOverlay: document.getElementById("pause-overlay"),
+    resumeBtn: document.getElementById("resume-btn"),
+    pauseRestartBtn: document.getElementById("pause-restart-btn"),
+    pauseMenuBtn: document.getElementById("pause-menu-btn"),
     liveRegion: document.getElementById("live-region")
   };
 
   /* ---------- Header meta ---------- */
 
   var difficultyLabels = { easy: "Easy", medium: "Medium", hard: "Hard" };
-  els.modeIndicator.textContent = mode === "ai" ? "Vs AI" : "Two player";
-  els.nameO.textContent = mode === "ai" ? "AI" : "Player O";
-  if (mode === "ai") {
-    els.difficultyWrap.hidden = false;
-    els.difficultyIndicator.textContent = difficultyLabels[difficulty] || "Medium";
-  } else {
-    els.difficultyWrap.hidden = true;
+
+  function updateModeLabels() {
+    if (mode === "ai") {
+      els.modeIndicator.textContent = "Vs AI";
+      els.difficultyWrap.hidden = false;
+      els.difficultyIndicator.textContent = difficultyLabels[difficulty] || "Medium";
+      if (humanSymbol === "X") {
+        els.nameX.textContent = "Player 1";
+        els.nameO.textContent = "AI";
+      } else {
+        els.nameX.textContent = "AI";
+        els.nameO.textContent = "Player 1";
+      }
+    } else {
+      els.modeIndicator.textContent = "Two player";
+      els.difficultyWrap.hidden = true;
+      if (p1Symbol === "X") {
+        els.nameX.textContent = "Player 1";
+        els.nameO.textContent = "Player 2";
+      } else {
+        els.nameX.textContent = "Player 2";
+        els.nameO.textContent = "Player 1";
+      }
+    }
   }
-  // In "ai" mode, O is always played by ai.js (see maybeTakeAiTurn()); X is
-  // always the human.
+  updateModeLabels();
 
   function refreshScoreboard() {
     var stats = window.TTTStorage.getStats();
-    els.scoreX.textContent = stats.xWins;
-    els.scoreO.textContent = stats.oWins;
-    els.scoreDraw.textContent = stats.draws;
+    if (mode === "ai") {
+      var humanScore = stats.ai.playerWins;
+      var aiScore = stats.ai.aiWins;
+      els.scoreX.textContent = humanSymbol === "X" ? humanScore : aiScore;
+      els.scoreO.textContent = humanSymbol === "X" ? aiScore : humanScore;
+      els.scoreDraw.textContent = stats.ai.draws;
+    } else {
+      var p1 = stats.twoPlayer.p1Wins;
+      var p2 = stats.twoPlayer.p2Wins;
+      els.scoreX.textContent = p1Symbol === "X" ? p1 : p2;
+      els.scoreO.textContent = p1Symbol === "X" ? p2 : p1;
+      els.scoreDraw.textContent = stats.twoPlayer.draws;
+    }
   }
   refreshScoreboard();
 
@@ -293,9 +339,13 @@ window.TTTGame = window.TTTGame || {};
   function renderTurn() {
     if (engine.globalStatus) {
       els.turnLabel.textContent = "Game over";
+    } else if (mode === "ai") {
+      els.turnLabel.textContent = engine.currentPlayer === aiSymbol
+        ? "AI is thinking\u2026"
+        : "Player\u2019s turn";
     } else {
-      var name = engine.currentPlayer === "X" ? els.nameX.textContent : els.nameO.textContent;
-      els.turnLabel.textContent = name + "\u2019s turn";
+      var isP1Turn = engine.currentPlayer === p1Symbol;
+      els.turnLabel.textContent = (isP1Turn ? "Player 1" : "Player 2") + "\u2019s turn";
     }
     els.turnDot.className = "turn-dot turn-dot--" + engine.currentPlayer.toLowerCase();
   }
@@ -354,8 +404,9 @@ window.TTTGame = window.TTTGame || {};
   /* ---------- Interaction ---------- */
 
   function onCellClick(e) {
+    if (paused) return;
     if (engine.globalStatus) return;
-    if (mode === "ai" && (aiThinking || engine.currentPlayer === "O")) return;
+    if (mode === "ai" && (aiThinking || engine.currentPlayer === aiSymbol)) return;
     var b = Number(e.currentTarget.dataset.board);
     var c = Number(e.currentTarget.dataset.cell);
 
@@ -374,6 +425,7 @@ window.TTTGame = window.TTTGame || {};
     var result = engine.play(b, c);
     if (!result) return;
 
+    pushHistory();
     renderCell(b, c);
     window.TTTAnimation && window.TTTAnimation.popCell(cellEls[b][c]);
     window.TTTSound && window.TTTSound.play("place");
@@ -398,29 +450,56 @@ window.TTTGame = window.TTTGame || {};
     maybeTakeAiTurn();
   }
 
+  /** Approximately 0.5–2s so the AI feels like it's actually considering
+   *  the board, without ever feeling sluggish. */
+  function aiThinkDelay() {
+    return 600 + Math.random() * 700; // ~0.6s–1.3s
+  }
+
   function maybeTakeAiTurn() {
     if (mode !== "ai") return;
+    if (paused) return;
     if (engine.globalStatus) return;
-    if (engine.currentPlayer !== "O") return;
+    if (engine.currentPlayer !== aiSymbol) return;
     if (!window.TTTGame || !window.TTTGame.AI) return;
 
     aiThinking = true;
-    if (els.aiThinkingEl) els.aiThinkingEl.hidden = false;
+    renderTurn();
     if (boardWrapEl) boardWrapEl.classList.add("is-ai-turn");
 
-    setTimeout(function () {
-      var move = window.TTTGame.AI.pickMove(engine, "O", difficulty);
+    aiTimeoutId = setTimeout(function () {
+      aiTimeoutId = null;
+      var move = window.TTTGame.AI.pickMove(engine, aiSymbol, difficulty);
 
       aiThinking = false;
-      if (els.aiThinkingEl) els.aiThinkingEl.hidden = true;
       if (boardWrapEl) boardWrapEl.classList.remove("is-ai-turn");
 
       if (move) commitMove(move.board, move.cell);
-    }, 450);
+    }, aiThinkDelay());
+  }
+
+  /** Cancels a pending AI move (e.g. because the player paused or hit
+   *  undo) so a stale move never lands after the state has changed. */
+  function clearPendingAiTurn() {
+    if (aiTimeoutId) {
+      clearTimeout(aiTimeoutId);
+      aiTimeoutId = null;
+    }
+    aiThinking = false;
+    if (boardWrapEl) boardWrapEl.classList.remove("is-ai-turn");
   }
 
   function endGame(winner) {
-    window.TTTStorage.recordResult(winner);
+    if (mode === "ai") {
+      var aiOutcome = winner === "D" ? "draw" : (winner === humanSymbol ? "player" : "ai");
+      window.TTTStorage.recordResult("ai", aiOutcome);
+    } else {
+      var tpOutcome = winner === "D" ? "draw" : (winner === p1Symbol ? "p1" : "p2");
+      window.TTTStorage.recordResult("twoPlayer", tpOutcome);
+      // Symbols automatically swap for the *next* match — takes effect the
+      // next time newGame() reads the start symbol from storage.
+      window.TTTStorage.toggleTwoPlayerStartSymbol();
+    }
     refreshScoreboard();
 
     localBoardEls.forEach(function (el) { el.classList.remove("local-board--active"); });
@@ -457,22 +536,165 @@ window.TTTGame = window.TTTGame || {};
   }
 
   function newGame() {
+    clearPendingAiTurn();
     hideOverlay();
+    if (mode !== "ai") {
+      // Re-read in case the previous match just finished and toggled it.
+      p1Symbol = window.TTTStorage.getTwoPlayerStartSymbol();
+    }
     engine.reset();
     boardEl.classList.remove("ultimate-board--won");
     localBoardEls.forEach(function (el) {
       el.classList.remove("local-board--won-x", "local-board--won-o", "local-board--draw", "local-board--celebrate", "shake");
     });
+    history = [];
+    redoStack = [];
+    pushHistory();
+    updateModeLabels();
+    refreshScoreboard();
     fullRender();
     fitBoard();
     window.TTTAnimation && window.TTTAnimation.boardEntrance(boardEl);
+    maybeTakeAiTurn();
+  }
+
+  /* ---------- Undo / redo ----------
+     A snapshot is taken after every committed move. In AI mode a human
+     move and the AI's reply are treated as one atomic step, so undo/redo
+     always leave the human to move next. ---------- */
+
+  function snapshotEngine() {
+    return {
+      boards: engine.boards.map(function (row) { return row.slice(); }),
+      boardStatus: engine.boardStatus.slice(),
+      boardWinLines: engine.boardWinLines.map(function (l) { return l ? l.slice() : null; }),
+      currentPlayer: engine.currentPlayer,
+      activeBoard: engine.activeBoard,
+      globalStatus: engine.globalStatus,
+      globalWinLine: engine.globalWinLine ? engine.globalWinLine.slice() : null,
+      moveCount: engine.moveCount,
+      lastMove: engine.lastMove,
+      mover: engine.lastMove ? engine.lastMove.player : null
+    };
+  }
+
+  function restoreEngine(snap) {
+    engine.boards = snap.boards.map(function (row) { return row.slice(); });
+    engine.boardStatus = snap.boardStatus.slice();
+    engine.boardWinLines = snap.boardWinLines.map(function (l) { return l ? l.slice() : null; });
+    engine.currentPlayer = snap.currentPlayer;
+    engine.activeBoard = snap.activeBoard;
+    engine.globalStatus = snap.globalStatus;
+    engine.globalWinLine = snap.globalWinLine ? snap.globalWinLine.slice() : null;
+    engine.moveCount = snap.moveCount;
+    engine.lastMove = snap.lastMove;
+  }
+
+  function pushHistory() {
+    history.push(snapshotEngine());
+    redoStack = [];
+    updateHistoryButtons();
+  }
+
+  function updateHistoryButtons() {
+    if (els.undoBtn) els.undoBtn.disabled = history.length <= 1;
+    if (els.redoBtn) els.redoBtn.disabled = redoStack.length === 0;
+  }
+
+  function afterHistoryChange() {
+    fullRender();
+    if (engine.globalStatus) {
+      showOverlay(engine.globalStatus);
+    } else {
+      hideOverlay();
+    }
+    updateHistoryButtons();
+    maybeTakeAiTurn();
+  }
+
+  function undo() {
+    if (paused) return;
+    if (history.length <= 1) return;
+    clearPendingAiTurn();
+
+    var popped = history.pop();
+    redoStack.push(popped);
+
+    if (mode === "ai" && popped.mover === aiSymbol && history.length > 1) {
+      redoStack.push(history.pop());
+    }
+
+    restoreEngine(history[history.length - 1]);
+    afterHistoryChange();
+  }
+
+  function redo() {
+    if (paused) return;
+    if (!redoStack.length) return;
+    clearPendingAiTurn();
+
+    var next = redoStack.pop();
+    history.push(next);
+
+    if (mode === "ai" && next.mover === humanSymbol && redoStack.length &&
+        redoStack[redoStack.length - 1].mover === aiSymbol) {
+      history.push(redoStack.pop());
+    }
+
+    restoreEngine(history[history.length - 1]);
+    afterHistoryChange();
+  }
+
+  /* ---------- Pause ---------- */
+
+  function showPauseOverlay() {
+    if (!els.pauseOverlay) return;
+    els.pauseOverlay.hidden = false;
+    requestAnimationFrame(function () { els.pauseOverlay.classList.add("victory-overlay--show"); });
+  }
+
+  function hidePauseOverlay() {
+    if (!els.pauseOverlay) return;
+    els.pauseOverlay.classList.remove("victory-overlay--show");
+    setTimeout(function () { els.pauseOverlay.hidden = true; }, 250);
+  }
+
+  function pauseGame() {
+    if (paused || engine.globalStatus) return;
+    paused = true;
+    clearPendingAiTurn();
+    if (els.bottomNav) els.bottomNav.classList.add("bottom-nav--disabled");
+    showPauseOverlay();
+  }
+
+  function resumeGame() {
+    if (!paused) return;
+    paused = false;
+    hidePauseOverlay();
+    if (els.bottomNav) els.bottomNav.classList.remove("bottom-nav--disabled");
+    maybeTakeAiTurn();
   }
 
   /* ---------- Controls ---------- */
 
   els.restartBtn.addEventListener("click", newGame);
   els.rematchBtn.addEventListener("click", newGame);
-  els.menuBtn.addEventListener("click", function () { window.location.href = "../index.html"; });
+
+  if (els.undoBtn) els.undoBtn.addEventListener("click", undo);
+  if (els.redoBtn) els.redoBtn.addEventListener("click", redo);
+
+  if (els.pauseBtn) els.pauseBtn.addEventListener("click", pauseGame);
+  if (els.resumeBtn) els.resumeBtn.addEventListener("click", resumeGame);
+  if (els.pauseRestartBtn) {
+    els.pauseRestartBtn.addEventListener("click", function () {
+      paused = false;
+      hidePauseOverlay();
+      if (els.bottomNav) els.bottomNav.classList.remove("bottom-nav--disabled");
+      newGame();
+    });
+  }
+  // els.pauseMenuBtn is a plain link to ../index.html — completed-match
+  // stats are already persisted via recordResult(), nothing else to save.
 
   if (els.soundToggle) {
     var soundOn = window.TTTStorage.getSoundOn();
@@ -502,11 +724,14 @@ window.TTTGame = window.TTTGame || {};
   }
 
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && els.overlay && !els.overlay.hidden) hideOverlay();
+    if (e.key !== "Escape") return;
+    if (paused) resumeGame();
+    else if (els.overlay && !els.overlay.hidden) hideOverlay();
   });
 
   /* ---------- Init ---------- */
 
+  pushHistory();
   fullRender();
   fitBoard();
   window.TTTAnimation && window.TTTAnimation.boardEntrance(boardEl);
