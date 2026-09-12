@@ -8,6 +8,7 @@
   .ultimate-board { width: min(360px, 100%); transform: rotate(-2deg); }
   .steps { grid-template-columns: 1fr 1fr; row-gap: 3rem; }
   .steps__thread { display: none; }
+  .mode-cards { grid-template-columns: 1fr; }
 
   .ultimate-board--game { --cell: 3rem; }
 }

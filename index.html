@@ -177,7 +177,7 @@
         </svg>
 
         <table class="score-table">
-          <caption class="visually-hidden">Match results for Two Player and Vs AI modes</caption>
+          <caption class="visually-hidden">Match results for Two Player, Vs AI, and Online modes</caption>
           <thead>
             <tr>
               <th scope="col" class="score-table__mode-head">Mode</th>
@@ -203,6 +203,15 @@
               <td class="score-table__cell">
                 <strong id="wb-ai">0</strong>
                 <span class="score-table__sub">AI</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="mode-card__badge">online</span></th>
+              <td class="score-table__cell"><strong id="wb-online-you">0</strong></td>
+              <td class="score-table__cell score-table__cell--draw"><strong id="wb-online-draws">0</strong></td>
+              <td class="score-table__cell">
+                <strong id="wb-online-opponent">0</strong>
+                <span class="score-table__sub">Opponent</span>
               </td>
             </tr>
           </tbody>
@@ -301,6 +310,28 @@
             </div>
           </div>
         </div>
+
+        <div class="mode-card" data-mode="online" role="button" tabindex="0" aria-pressed="false" data-reveal>
+          <div class="mode-card__pieces" aria-hidden="true">
+            <svg><use href="#glyph-x"/></svg><svg><use href="#glyph-o"/></svg>
+          </div>
+          <span class="mode-card__badge">play a friend, anywhere</span>
+          <h3>Online</h3>
+          <p>Create a room and send the link to a friend, or join one they've sent you. No account needed.</p>
+
+          <div class="difficulty-panel">
+            <div class="difficulty-panel__inner">
+              <div class="online-panel">
+                <button type="button" class="btn btn--primary online-panel__create" id="create-room-btn">Create a room</button>
+                <div class="online-panel__divider"><span>or join one</span></div>
+                <div class="online-panel__join">
+                  <input type="text" id="join-room-code" class="online-panel__input" placeholder="Room code" maxlength="6" autocomplete="off" spellcheck="false" aria-label="Room code">
+                  <button type="button" class="btn" id="join-room-btn">Join</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="mode-picker__cta">
@@ -320,6 +351,7 @@
 
 <script src="js/storage.js"></script>
 <script src="js/animation.js"></script>
+<script src="js/online.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

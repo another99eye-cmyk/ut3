@@ -103,16 +103,55 @@
     if (savedCard) selectCard(savedCard);
 
     function updateCta() {
-      var cta = document.querySelector(".mode-picker__cta a");
+      var cta = document.querySelector(".mode-picker__cta");
       if (!cta) return;
+      // The Online card has its own Create/Join actions instead of a
+      // generic Start button.
+      cta.hidden = settings.mode === "online";
+      if (cta.hidden) return;
+      var link = cta.querySelector("a");
       var params = new URLSearchParams();
       params.set("mode", settings.mode);
       if (settings.mode === "ai") {
         params.set("difficulty", settings.difficulty || "medium");
         params.set("symbol", settings.playerSymbol || "X");
       }
-      cta.href = "pages/game.html?" + params.toString();
+      link.href = "pages/game.html?" + params.toString();
     }
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* online mode — create/join room controls on the Online card        */
+  /* ---------------------------------------------------------------- */
+
+  function initOnlinePanel() {
+    var createBtn = document.getElementById("create-room-btn");
+    var joinBtn = document.getElementById("join-room-btn");
+    var codeInput = document.getElementById("join-room-code");
+    if (!createBtn || !joinBtn || !codeInput || !window.TTTOnline) return;
+
+    createBtn.addEventListener("click", function () {
+      var code = window.TTTOnline.randomRoomCode();
+      window.location.href = "pages/game.html?mode=online&role=host&room=" + code;
+    });
+
+    function attemptJoin() {
+      var code = window.TTTOnline.normalizeCode(codeInput.value);
+      if (!code) {
+        codeInput.focus();
+        if (window.TTTAnimation) window.TTTAnimation.shakeCell(codeInput);
+        return;
+      }
+      window.location.href = "pages/game.html?mode=online&role=guest&room=" + code;
+    }
+
+    joinBtn.addEventListener("click", attemptJoin);
+    codeInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        attemptJoin();
+      }
+    });
   }
 
   /* ---------------------------------------------------------------- */
@@ -130,6 +169,9 @@
     var player = document.getElementById("wb-player");
     var ai = document.getElementById("wb-ai");
     var aiDraws = document.getElementById("wb-ai-draws");
+    var onlineYou = document.getElementById("wb-online-you");
+    var onlineOpp = document.getElementById("wb-online-opponent");
+    var onlineDraws = document.getElementById("wb-online-draws");
 
     if (p1) p1.textContent = stats.twoPlayer.p1Wins;
     if (p2) p2.textContent = stats.twoPlayer.p2Wins;
@@ -137,11 +179,15 @@
     if (player) player.textContent = stats.ai.playerWins;
     if (ai) ai.textContent = stats.ai.aiWins;
     if (aiDraws) aiDraws.textContent = stats.ai.draws;
+    if (onlineYou) onlineYou.textContent = stats.online.youWins;
+    if (onlineOpp) onlineOpp.textContent = stats.online.opponentWins;
+    if (onlineDraws) onlineDraws.textContent = stats.online.draws;
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
     initModePicker();
+    initOnlinePanel();
     renderWinBoard();
     if (window.TTTAnimation) window.TTTAnimation.init();
   });

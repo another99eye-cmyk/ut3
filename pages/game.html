@@ -178,11 +178,34 @@
   </div>
 </div>
 
+<div class="victory-overlay" id="online-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="online-title">
+  <div class="victory-card">
+    <div class="victory-card__icon" id="online-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/>
+      </svg>
+    </div>
+    <h2 id="online-title">Connecting&hellip;</h2>
+    <p id="online-sub">Setting things up.</p>
+    <div class="online-room-code" id="online-room-code" hidden>
+      <span class="online-room-code__label">Room code</span>
+      <span class="online-room-code__value" id="online-code-text">ABCDE</span>
+      <button class="btn" type="button" id="copy-link-btn">Copy invite link</button>
+    </div>
+    <div class="victory-card__actions victory-card__actions--stack">
+      <a class="btn" href="../index.html">Main menu</a>
+    </div>
+  </div>
+</div>
+
 <div id="live-region" class="visually-hidden" aria-live="polite"></div>
 
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="../js/storage.js"></script>
 <script src="../js/animation.js"></script>
 <script src="../js/ai.js"></script>
+<script src="../js/online.js"></script>
 <script src="../js/game.js"></script>
 </body>
 </html>

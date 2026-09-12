@@ -34,7 +34,8 @@
   function defaultStats() {
     return {
       twoPlayer: { p1Wins: 0, p2Wins: 0, draws: 0 },
-      ai: { playerWins: 0, aiWins: 0, draws: 0 }
+      ai: { playerWins: 0, aiWins: 0, draws: 0 },
+      online: { youWins: 0, opponentWins: 0, draws: 0 }
     };
   }
 
@@ -90,22 +91,34 @@
        freely (AI mode). */
     getStats: function () {
       var s = safeGet("stats", null);
-      if (!s || !s.twoPlayer || !s.ai) return defaultStats();
+      if (!s || !s.twoPlayer || !s.ai || !s.online) {
+        var d = defaultStats();
+        return {
+          twoPlayer: (s && s.twoPlayer) || d.twoPlayer,
+          ai: (s && s.ai) || d.ai,
+          online: (s && s.online) || d.online
+        };
+      }
       return s;
     },
     setStats: function (stats) {
       return safeSet("stats", stats);
     },
 
-    /** bucket: "twoPlayer" | "ai"
+    /** bucket: "twoPlayer" | "ai" | "online"
      *  outcome: "twoPlayer" bucket -> "p1" | "p2" | "draw"
-     *           "ai" bucket       -> "player" | "ai" | "draw" */
+     *           "ai" bucket       -> "player" | "ai" | "draw"
+     *           "online" bucket   -> "you" | "opponent" | "draw" */
     recordResult: function (bucket, outcome) {
       var stats = TTTStorage.getStats();
       if (bucket === "ai") {
         if (outcome === "player") stats.ai.playerWins++;
         else if (outcome === "ai") stats.ai.aiWins++;
         else stats.ai.draws++;
+      } else if (bucket === "online") {
+        if (outcome === "you") stats.online.youWins++;
+        else if (outcome === "opponent") stats.online.opponentWins++;
+        else stats.online.draws++;
       } else {
         if (outcome === "p1") stats.twoPlayer.p1Wins++;
         else if (outcome === "p2") stats.twoPlayer.p2Wins++;

@@ -169,6 +169,14 @@ window.TTTGame = window.TTTGame || {};
   // every completed match (see endGame()).
   var p1Symbol = window.TTTStorage.getTwoPlayerStartSymbol();
 
+  // Online mode: whoever created the room plays X and moves first; whoever
+  // joined plays O. Set once the WebRTC connection opens.
+  var onlineRole = params.get("role") === "guest" ? "guest" : "host";
+  var onlineRoomCode = window.TTTOnline ? window.TTTOnline.normalizeCode(params.get("room")) : "";
+  var mySymbol = onlineRole === "host" ? "X" : "O";
+  var onlineRoom = null;
+  var onlineConnected = false;
+
   var engine = new GameEngine();
   var aiThinking = false;
   var aiTimeoutId = null;
@@ -206,6 +214,12 @@ window.TTTGame = window.TTTGame || {};
     resumeBtn: document.getElementById("resume-btn"),
     pauseRestartBtn: document.getElementById("pause-restart-btn"),
     pauseMenuBtn: document.getElementById("pause-menu-btn"),
+    onlineOverlay: document.getElementById("online-overlay"),
+    onlineTitle: document.getElementById("online-title"),
+    onlineSub: document.getElementById("online-sub"),
+    onlineRoomCodeWrap: document.getElementById("online-room-code"),
+    onlineCodeText: document.getElementById("online-code-text"),
+    copyLinkBtn: document.getElementById("copy-link-btn"),
     liveRegion: document.getElementById("live-region")
   };
 
@@ -224,6 +238,16 @@ window.TTTGame = window.TTTGame || {};
       } else {
         els.nameX.textContent = "AI";
         els.nameO.textContent = "Player 1";
+      }
+    } else if (mode === "online") {
+      els.modeIndicator.textContent = "Online";
+      els.difficultyWrap.hidden = true;
+      if (mySymbol === "X") {
+        els.nameX.textContent = "You";
+        els.nameO.textContent = "Opponent";
+      } else {
+        els.nameX.textContent = "Opponent";
+        els.nameO.textContent = "You";
       }
     } else {
       els.modeIndicator.textContent = "Two player";
@@ -247,6 +271,12 @@ window.TTTGame = window.TTTGame || {};
       els.scoreX.textContent = humanSymbol === "X" ? humanScore : aiScore;
       els.scoreO.textContent = humanSymbol === "X" ? aiScore : humanScore;
       els.scoreDraw.textContent = stats.ai.draws;
+    } else if (mode === "online") {
+      var youScore = stats.online.youWins;
+      var oppScore = stats.online.opponentWins;
+      els.scoreX.textContent = mySymbol === "X" ? youScore : oppScore;
+      els.scoreO.textContent = mySymbol === "X" ? oppScore : youScore;
+      els.scoreDraw.textContent = stats.online.draws;
     } else {
       var p1 = stats.twoPlayer.p1Wins;
       var p2 = stats.twoPlayer.p2Wins;
@@ -343,6 +373,14 @@ window.TTTGame = window.TTTGame || {};
       els.turnLabel.textContent = engine.currentPlayer === aiSymbol
         ? "AI is thinking\u2026"
         : "Player\u2019s turn";
+    } else if (mode === "online") {
+      if (!onlineConnected) {
+        els.turnLabel.textContent = "Waiting to connect\u2026";
+      } else {
+        els.turnLabel.textContent = engine.currentPlayer === mySymbol
+          ? "Your turn"
+          : "Opponent\u2019s turn";
+      }
     } else {
       var isP1Turn = engine.currentPlayer === p1Symbol;
       els.turnLabel.textContent = (isP1Turn ? "Player 1" : "Player 2") + "\u2019s turn";
@@ -407,6 +445,7 @@ window.TTTGame = window.TTTGame || {};
     if (paused) return;
     if (engine.globalStatus) return;
     if (mode === "ai" && (aiThinking || engine.currentPlayer === aiSymbol)) return;
+    if (mode === "online" && (!onlineConnected || engine.currentPlayer !== mySymbol)) return;
     var b = Number(e.currentTarget.dataset.board);
     var c = Number(e.currentTarget.dataset.cell);
 
@@ -419,6 +458,9 @@ window.TTTGame = window.TTTGame || {};
       return;
     }
     commitMove(b, c);
+    if (mode === "online" && onlineRoom) {
+      onlineRoom.send({ type: "move", board: b, cell: c });
+    }
   }
 
   function commitMove(b, c) {
@@ -493,6 +535,9 @@ window.TTTGame = window.TTTGame || {};
     if (mode === "ai") {
       var aiOutcome = winner === "D" ? "draw" : (winner === humanSymbol ? "player" : "ai");
       window.TTTStorage.recordResult("ai", aiOutcome);
+    } else if (mode === "online") {
+      var onlineOutcome = winner === "D" ? "draw" : (winner === mySymbol ? "you" : "opponent");
+      window.TTTStorage.recordResult("online", onlineOutcome);
     } else {
       var tpOutcome = winner === "D" ? "draw" : (winner === p1Symbol ? "p1" : "p2");
       window.TTTStorage.recordResult("twoPlayer", tpOutcome);
@@ -538,7 +583,7 @@ window.TTTGame = window.TTTGame || {};
   function newGame() {
     clearPendingAiTurn();
     hideOverlay();
-    if (mode !== "ai") {
+    if (mode === "two-player") {
       // Re-read in case the previous match just finished and toggled it.
       p1Symbol = window.TTTStorage.getTwoPlayerStartSymbol();
     }
@@ -556,6 +601,15 @@ window.TTTGame = window.TTTGame || {};
     fitBoard();
     window.TTTAnimation && window.TTTAnimation.boardEntrance(boardEl);
     maybeTakeAiTurn();
+  }
+
+  /** Restart button/menu handlers call this. In online mode it also tells
+   *  the other player to restart, so both boards reset together. */
+  function restartGame(broadcast) {
+    newGame();
+    if (mode === "online" && broadcast && onlineRoom) {
+      onlineRoom.send({ type: "restart" });
+    }
   }
 
   /* ---------- Undo / redo ----------
@@ -597,6 +651,13 @@ window.TTTGame = window.TTTGame || {};
   }
 
   function updateHistoryButtons() {
+    if (mode === "online") {
+      // Undo/redo would desync the two peers' boards, so they're simply
+      // unavailable in online matches.
+      if (els.undoBtn) els.undoBtn.disabled = true;
+      if (els.redoBtn) els.redoBtn.disabled = true;
+      return;
+    }
     if (els.undoBtn) els.undoBtn.disabled = history.length <= 1;
     if (els.redoBtn) els.redoBtn.disabled = redoStack.length === 0;
   }
@@ -613,7 +674,7 @@ window.TTTGame = window.TTTGame || {};
   }
 
   function undo() {
-    if (paused) return;
+    if (mode === "online" || paused) return;
     if (history.length <= 1) return;
     clearPendingAiTurn();
 
@@ -629,7 +690,7 @@ window.TTTGame = window.TTTGame || {};
   }
 
   function redo() {
-    if (paused) return;
+    if (mode === "online" || paused) return;
     if (!redoStack.length) return;
     clearPendingAiTurn();
 
@@ -675,10 +736,106 @@ window.TTTGame = window.TTTGame || {};
     maybeTakeAiTurn();
   }
 
+  /* ---------- Online (WebRTC via PeerJS) ----------
+     One data channel, two message types: "move" (board, cell) and
+     "restart". Each side runs the exact same rules engine locally, so
+     there's nothing to reconcile — whatever arrives just gets replayed
+     through the normal commitMove()/newGame() paths. ---------- */
+
+  function showOnlineOverlay(title, sub, code) {
+    if (!els.onlineOverlay) return;
+    els.onlineTitle.textContent = title;
+    els.onlineSub.textContent = sub;
+    if (code) {
+      els.onlineRoomCodeWrap.hidden = false;
+      els.onlineCodeText.textContent = code;
+    } else {
+      els.onlineRoomCodeWrap.hidden = true;
+    }
+    els.onlineOverlay.hidden = false;
+    requestAnimationFrame(function () { els.onlineOverlay.classList.add("victory-overlay--show"); });
+  }
+
+  function hideOnlineOverlay() {
+    if (!els.onlineOverlay) return;
+    els.onlineOverlay.classList.remove("victory-overlay--show");
+    setTimeout(function () { els.onlineOverlay.hidden = true; }, 250);
+  }
+
+  function buildInviteLink(code) {
+    var url = new URL(window.location.href);
+    url.searchParams.set("mode", "online");
+    url.searchParams.set("role", "guest");
+    url.searchParams.set("room", code);
+    return url.toString();
+  }
+
+  function initOnline() {
+    if (!window.TTTOnline) {
+      showOnlineOverlay("Can\u2019t connect", "Something didn\u2019t load correctly. Try reloading the page.", null);
+      return;
+    }
+    if (!onlineRoomCode) {
+      showOnlineOverlay("No room code", "That link is missing a room code. Head back and create or join a room.", null);
+      return;
+    }
+
+    if (els.copyLinkBtn) {
+      els.copyLinkBtn.addEventListener("click", function () {
+        var link = buildInviteLink(onlineRoomCode);
+        var done = function () {
+          var original = els.copyLinkBtn.textContent;
+          els.copyLinkBtn.textContent = "Copied!";
+          setTimeout(function () { els.copyLinkBtn.textContent = original; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(link).then(done, done);
+        } else {
+          window.prompt("Copy this link:", link);
+        }
+      });
+    }
+
+    onlineRoom = window.TTTOnline.createRoom({
+      onHosted: function (code) {
+        showOnlineOverlay("Room ready", "Share this code or link with a friend to start.", code);
+      },
+      onConnected: function () {
+        onlineConnected = true;
+        hideOnlineOverlay();
+        renderTurn();
+      },
+      onMessage: function (data) {
+        if (!data || typeof data !== "object") return;
+        if (data.type === "move") {
+          commitMove(data.board, data.cell);
+        } else if (data.type === "restart") {
+          restartGame(false);
+        }
+      },
+      onDisconnected: function () {
+        onlineConnected = false;
+        renderTurn();
+        showOnlineOverlay("Opponent disconnected", "They'll need a fresh invite link to rejoin.", null);
+      },
+      onError: function (message) {
+        showOnlineOverlay("Connection problem", message, null);
+      }
+    });
+
+    if (onlineRole === "host") {
+      showOnlineOverlay("Setting up your room\u2026", "This only takes a second.", null);
+      onlineRoom.host(onlineRoomCode);
+    } else {
+      showOnlineOverlay("Joining room " + onlineRoomCode + "\u2026", "Connecting to your friend.", null);
+      onlineRoom.join(onlineRoomCode);
+    }
+  }
+
   /* ---------- Controls ---------- */
 
-  els.restartBtn.addEventListener("click", newGame);
-  els.rematchBtn.addEventListener("click", newGame);
+  els.restartBtn.addEventListener("click", function () { restartGame(true); });
+  els.rematchBtn.addEventListener("click", function () { restartGame(true); });
 
   if (els.undoBtn) els.undoBtn.addEventListener("click", undo);
   if (els.redoBtn) els.redoBtn.addEventListener("click", redo);
@@ -690,7 +847,7 @@ window.TTTGame = window.TTTGame || {};
       paused = false;
       hidePauseOverlay();
       if (els.bottomNav) els.bottomNav.classList.remove("bottom-nav--disabled");
-      newGame();
+      restartGame(true);
     });
   }
   // els.pauseMenuBtn is a plain link to ../index.html — completed-match
@@ -729,11 +886,20 @@ window.TTTGame = window.TTTGame || {};
     else if (els.overlay && !els.overlay.hidden) hideOverlay();
   });
 
+  window.addEventListener("beforeunload", function () {
+    if (onlineRoom) onlineRoom.close();
+  });
+
   /* ---------- Init ---------- */
 
   pushHistory();
   fullRender();
   fitBoard();
   window.TTTAnimation && window.TTTAnimation.boardEntrance(boardEl);
-  maybeTakeAiTurn();
+
+  if (mode === "online") {
+    initOnline();
+  } else {
+    maybeTakeAiTurn();
+  }
 })();
