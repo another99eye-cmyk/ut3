@@ -75,7 +75,7 @@
 }
 
 .game-shell .game-meta,
-.game-shell .game-controls {
+.game-shell .bottom-nav {
   flex: none;
   width: 100%;
 }

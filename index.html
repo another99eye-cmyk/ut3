@@ -170,42 +170,43 @@
         <p>Tracked automatically as you play. Nothing here resets just from coming back to this page.</p>
       </div>
 
-      <div class="win-board__grid" data-reveal-group>
-        <div class="win-board__card" data-reveal>
-          <span class="mode-card__badge">two player</span>
-          <div class="win-board__row">
-            <div class="win-board__col">
-              <span class="win-board__label">Player 1</span>
-              <strong class="win-board__score" id="wb-p1">0</strong>
-            </div>
-            <div class="win-board__col win-board__col--draw">
-              <span class="win-board__label">Draws</span>
-              <strong class="win-board__score" id="wb-tp-draws">0</strong>
-            </div>
-            <div class="win-board__col">
-              <span class="win-board__label">Player 2</span>
-              <strong class="win-board__score" id="wb-p2">0</strong>
-            </div>
-          </div>
-        </div>
+      <div class="score-card" data-reveal>
+        <svg class="score-card__sticker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 21h8M12 17v4M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
+          <path d="M6 5H3v2a4 4 0 0 0 4 4M18 5h3v2a4 4 0 0 1-4 4"/>
+        </svg>
 
-        <div class="win-board__card" data-reveal>
-          <span class="mode-card__badge">vs computer</span>
-          <div class="win-board__row">
-            <div class="win-board__col">
-              <span class="win-board__label">Player</span>
-              <strong class="win-board__score" id="wb-player">0</strong>
-            </div>
-            <div class="win-board__col win-board__col--draw">
-              <span class="win-board__label">Draws</span>
-              <strong class="win-board__score" id="wb-ai-draws">0</strong>
-            </div>
-            <div class="win-board__col">
-              <span class="win-board__label">AI</span>
-              <strong class="win-board__score" id="wb-ai">0</strong>
-            </div>
-          </div>
-        </div>
+        <table class="score-table">
+          <caption class="visually-hidden">Match results for Two Player and Vs AI modes</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="score-table__mode-head">Mode</th>
+              <th scope="col">Player 1</th>
+              <th scope="col" class="score-table__draws-head">Draws</th>
+              <th scope="col">Opponent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row"><span class="mode-card__badge">two player</span></th>
+              <td class="score-table__cell"><strong id="wb-p1">0</strong></td>
+              <td class="score-table__cell score-table__cell--draw"><strong id="wb-tp-draws">0</strong></td>
+              <td class="score-table__cell">
+                <strong id="wb-p2">0</strong>
+                <span class="score-table__sub">Player 2</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="mode-card__badge">vs computer</span></th>
+              <td class="score-table__cell"><strong id="wb-player">0</strong></td>
+              <td class="score-table__cell score-table__cell--draw"><strong id="wb-ai-draws">0</strong></td>
+              <td class="score-table__cell">
+                <strong id="wb-ai">0</strong>
+                <span class="score-table__sub">AI</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
