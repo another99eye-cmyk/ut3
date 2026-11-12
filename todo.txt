@@ -1,24 +1,132 @@
-1. Background Music: I'd create a folder in assets called music so assets/music which will contain some background music and when the player starts a game one of them will start to player.
+XT3 ULTIMATE TIC-TAC-TOE - TODO (ranked by importance)
+=======================================================
 
-2. Game specific player score:
-When a new game is started the game for either of the modes is started the game shows the scores of the previous game, though they are already in scoreboard of the home page. In the game page when a new game is started the score board should be cleared
+Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day or more
 
-3. Rules Explaination Problem:
-The users are saying that the rules explaination in the, how to play isn't clear. Use this it don't have to be specifically the same but it must follow this procedure.
 
-a. Board Set Up
-A large 3×3 grid, and inside each of the 9 big squares, draw a standard smaller 3×3 tic-tac-toe board.
+1. [x] DONE: In-game scoreboard shows previous game's scores          (Effort: S)
+   Why first: it's a bug, it's quick, and it confuses every player.
+   - Cause: refreshScoreboard() in js/game.js reads all-time stats from
+     TTTStorage.getStats(), so old scores show up on a fresh game.
+   - Fix: keep a separate in-memory session tally in game.js (X wins,
+     O wins, draws). Start it at 0 when the game page loads.
+   - Keep calling TTTStorage.recordResult() so the home page totals
+     still update as before.
+   - DECIDED: Rematch / Restart inside the same game page keeps adding
+     to the session tally (it does NOT reset to 0-0).
+   - Applies to all three modes: two-player, AI, online.
+   - Test: play a game, go home, start a new game -> scoreboard is 0-0.
+     Play, hit Rematch -> tally carries over.
 
-b. Follow the Move Rule
-The first player place in any empty spot on any of the 9 small boards. Your specific cell choice dictates where your opponent must play next: whatever relative position you pick inside your small board forces your opponent to play inside the corresponding small board on the main grid (for example, playing in the bottom-right corner sends them to the bottom-right small board). If you are sent to a board that is already won or full, you get a "free turn" and can play on any open board.
 
-c. Claim Small Boards to Win the Game
+2. [ ] Rewrite the "How to play" explanation                          (Effort: M)
+   Why: users report it isn't clear. This is the main onboarding problem.
+   - Replace the current 3 steps in index.html (#how-it-works) with:
+       a. Board set up: big 3x3 grid, each square holds a small 3x3 board.
+       b. The move rule: the cell you pick decides which small board your
+          opponent must play in next (bottom-right cell -> bottom-right
+          board). If that board is already won or full, they get a
+          "free turn" and can play on any open board.
+       c. Claim small boards: win a small board with three in a row,
+          which claims that big square. First to get three small boards
+          in a row (horizontal, vertical, diagonal) wins the game.
+   - Add visuals: a small animated diagram for step b (a corner move
+     sending the opponent to the matching board), a diagram for the free
+     turn, and a mini board for step c.
+   - Build the diagrams with CSS variables from css/theme.css so they
+     follow the visual refresh (item 8) automatically.
+   - Move the "free turn" rule out of step 3 where it is buried now.
+   - Optional: one-time tooltip on the first game ("You must play in the
+     highlighted board").
 
-Win a small board by getting three-in-a-row just like regular tic-tac-toe, which conquers that entire big square for your symbol. The first player to get three small boards in a row (horizontally, vertically, or diagonally) on the large global board wins the game
 
-(Maybe adding some visuals to explain will do some good)
+3. [ ] Feedback form (Formspree) for requests and complaints          (Effort: M)
+   Why: you have real users giving feedback; give them a proper channel.
+   - Create a form at formspree.io to get your form ID, then post to
+     https://formspree.io/f/YOUR_FORM_ID
+   - Fields: type (Request / Complaint / Bug), message, email (optional
+     but recommended so you can reply), name (optional).
+   - Submit with fetch() and an "Accept: application/json" header so the
+     page shows an inline "Thanks!" message instead of leaving the site.
+   - Add a hidden honeypot field (_gotcha) against spam; turn on
+     Formspree's spam protection in its dashboard.
+   - Handle errors (offline, failed send) with a clear message.
+   - Placement: a section or footer on index.html, plus a "Feedback" link
+     on the game page.
+   - Keep it accessible: labels on every field, keyboard friendly, focus
+     moves to the success message.
 
-4. Graphics and visuals:
-a. Update the graphics and visuals of the website.
-b. Scroll-Aware Header: A navbar that shrinks, changes background opacity, or hides when scrolling down and reappears when scrolling back up to reclaim screen space.
-c. Loading and Skeleton Screens: Smooth spinners or content placeholders that make waiting times feel shorter.
+
+4. [ ] Background music                                                (Effort: M)
+   - Put tracks in assets/music (folder already exists, currently empty).
+     Use properly licensed (CC0 / royalty-free) loops, MP3, about 1-3 MB.
+   - Start a track when a game starts on game.html. Browsers often block
+     autoplay on a fresh page, so try to play, and fall back to starting
+     on the player's first tap.
+   - Add a separate music toggle (don't reuse the sound-effects toggle),
+     remember the choice in localStorage, and keep the volume low.
+   - Pause music when the pause overlay opens or the tab is hidden.
+   - Use preload="none" so it doesn't slow the page load.
+
+
+5. [ ] Loader for index.html and game.html                            (Effort: M)
+   - UTTT-themed: e.g. a mini 3x3-of-3x3 board where X and O draw in one
+     by one, reusing the existing glyph-x / glyph-o SVG symbols and theme
+     colors (so it works in light and dark mode).
+   - Same loader on both pages. Share the markup and CSS rather than
+     copying it. Put the critical loader CSS inline in <head> so it
+     shows before the main stylesheets arrive.
+   - Minimum display time of 0.5 seconds even if the page is fully
+     loaded: hide it only when BOTH the page "load" event has fired AND
+     500 ms has passed.
+   - Safety: add a maximum timeout (e.g. 5 s) so the loader can never get
+     stuck, since game.html also waits on PeerJS from unpkg and Google
+     Fonts. Make sure the page is still usable if JavaScript fails.
+   - Don't show it again when returning via the back button (pageshow
+     event with persisted = true).
+   - Respect prefers-reduced-motion (show a static or simple fade version).
+   - Accessibility: role="status" / aria-live, and hide it from screen
+     readers once finished.
+
+
+6. [ ] Scroll-aware header                                             (Effort: S)
+   - The header (.site-header in css/main.css) is already sticky with a
+     blur. Add: hide on scroll down, reappear on scroll up, and change
+     background opacity / shrink when not at the top.
+   - Use a CSS transform plus a small scroll listener (use
+     requestAnimationFrame or IntersectionObserver, not heavy handlers).
+   - Apply on the home page. The game page barely scrolls, so leave it
+     fixed there.
+   - Respect prefers-reduced-motion.
+
+
+7. [ ] Skeleton / spinner states for real waiting moments              (Effort: S)
+   Note: the site is static, so there is little content to wait for.
+   Use loading states only where there is a real wait:
+   - Online mode "Connecting..." overlay (room creation / joining).
+   - Google Fonts: add font-display: swap so text doesn't flash or block.
+   - AI "thinking" indicator, if it isn't already visible.
+   (Item 5, the page loader, covers the general page load.)
+
+
+8. [ ] Graphics and visual refresh                                    (Effort: L)
+   Do this last: it touches CSS everywhere. Decide a direction FIRST
+   (palette, board style, piece style, typography) before coding.
+   - Update the look of index.html and game.html.
+   - Keep everything on CSS variables in css/theme.css so light/dark mode
+     and the new diagrams, loader and header all follow.
+   - Re-check mobile layouts (css/responsive.css) after changes.
+
+
+OTHER THINGS WORTH DOING (not ranked above, lower priority)
+-----------------------------------------------------------
+A. [ ] Online reliability: online.js uses PeerJS's free public broker
+       with no TURN server, so connections can fail on some mobile or
+       strict networks. Consider adding a TURN server and a clearer
+       "couldn't connect" message.
+B. [x] DONE: Fix stale meta description in pages/game.html (it says "two
+       player, local" but the page also runs AI and online modes).
+C. [ ] Test what happens when the page is refreshed mid-game, especially
+       on mobile (not checked yet).
+D. [ ] Check how strong the highlight on the active small board is, so
+       players can always see where they must play.
