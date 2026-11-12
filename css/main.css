@@ -279,49 +279,171 @@ button { font-family: inherit; cursor: pointer; }
   background: var(--bg-alt);
 }
 
-.steps {
-  position: relative;
+.rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.rule {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
   gap: 2.5rem;
-}
-
-.steps__thread {
-  position: absolute;
-  top: 3.4rem;
-  left: 8%;
-  right: 8%;
-  height: 2px;
-  background-image: linear-gradient(to right, var(--line) 0 10px, transparent 10px 20px);
-  background-size: 20px 2px;
-  background-repeat: repeat-x;
-  z-index: 0;
-}
-
-.step {
-  position: relative;
-  z-index: 1;
+  align-items: center;
   background: var(--paper);
   border: var(--border-w) solid var(--line);
   border-radius: var(--radius-md);
-  padding: 1.6rem 1.5rem 1.8rem;
+  padding: 2rem 2.2rem;
   box-shadow: var(--hard-shadow-sm);
 }
 
-.step__icon {
+.rule__text { display: grid; gap: .8rem; justify-items: start; }
+.rule__text h3 { font-size: 1.5rem; }
+.rule__text p { color: var(--ink-soft); font-size: 1rem; max-width: 52ch; }
+.rule__text p strong { color: var(--ink); }
+
+.rule__num {
   display: grid;
   place-items: center;
-  width: 3.4rem;
-  height: 3.4rem;
-  margin-bottom: 1.1rem;
+  width: 2.8rem;
+  height: 2.8rem;
   border: var(--border-w) solid var(--line);
   border-radius: 50%;
-  background: var(--bg);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
 }
-.step__icon svg { width: 1.7rem; height: 1.7rem; }
 
-.step h3 { font-size: 1.25rem; margin-bottom: .5rem; }
-.step p { color: var(--ink-soft); font-size: .98rem; }
+.rule__tip,
+.rule__note {
+  padding: .6rem .9rem;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: .92rem !important;
+}
+.rule__tip { display: flex; align-items: center; gap: .6rem; color: var(--ink) !important; }
+.rule__tip-dot {
+  flex: none;
+  width: .9rem;
+  height: .9rem;
+  border: 2px solid var(--line);
+  border-radius: 4px;
+  background: var(--accent);
+  animation: glow-pulse 2.2s ease-in-out infinite;
+}
+
+.rule__figs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.htp-fig {
+  margin: 0;
+  flex: 1 1 200px;
+  max-width: 250px;
+  display: grid;
+  gap: .7rem;
+  justify-items: center;
+}
+.htp-fig figcaption {
+  text-align: center;
+  font-size: .88rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+.rules__cta { margin-top: 2.5rem; display: flex; justify-content: center; }
+
+/* diagram drawing (SVG classes from the how-to-play figures) */
+.htp-svg { width: 100%; height: auto; display: block; color: var(--ink); overflow: visible; }
+.htp-svg .frame { fill: var(--bg); stroke: var(--line); stroke-width: 3; }
+.htp-svg .sb-bg { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
+.htp-svg .sb-grid { stroke: var(--ink-soft); stroke-width: 1.5; fill: none; }
+.htp-svg .mk-x { stroke: var(--x-color); }
+.htp-svg .mk-o { stroke: var(--o-color); }
+.htp-svg .is-dim { opacity: .45; }
+.htp-svg .is-from .sb-bg { stroke-width: 3; }
+.htp-svg .is-target .sb-bg,
+.htp-svg .is-free .sb-bg { fill: color-mix(in srgb, var(--accent) 55%, var(--paper)); stroke-width: 3; }
+.htp-svg .is-free .sb-bg { animation: htp-pulse 2.2s ease-in-out infinite; }
+.htp-svg .is-target .sb-bg { animation: htp-pulse 2.2s ease-in-out infinite; }
+.htp-svg .is-closed .sb-bg,
+.htp-svg .is-won-o .sb-bg { fill: var(--o-color-soft); }
+.htp-svg .is-won-x .sb-bg { fill: var(--x-color-soft); }
+.htp-svg .is-closed { opacity: .9; }
+.htp-svg .is-open-bg { fill: var(--paper); stroke: var(--line); stroke-width: 3; }
+.htp-svg .ring { fill: none; stroke: var(--line); stroke-width: 2.5; stroke-dasharray: 4 3; }
+.htp-svg .arrow { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 7 6; }
+.htp-svg .arrow-head { fill: var(--ink); }
+.htp-svg .win-line { stroke: var(--ink); stroke-width: 6; opacity: .85; fill: none; }
+
+@keyframes htp-pulse {
+  0%, 100% { stroke-width: 3; }
+  50% { stroke-width: 5.5; }
+}
+
+/* -------------------------------------------------------------------- */
+/* feedback form                                                         */
+/* -------------------------------------------------------------------- */
+
+.feedback { border-top: var(--border-w) solid var(--line); background: var(--bg-alt); }
+.feedback .section__head { margin-bottom: 2rem; margin-inline: auto; text-align: center; }
+
+.feedback-card {
+  max-width: 640px;
+  margin-inline: auto;
+  background: var(--paper);
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: var(--hard-shadow);
+}
+
+.feedback-form { display: grid; gap: 1.2rem; }
+
+.field { display: grid; gap: .4rem; }
+.field label { font-family: var(--font-mono); font-weight: 600; font-size: .85rem; }
+
+.field input,
+.field textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: .75rem .9rem;
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--ink);
+}
+.field textarea { resize: vertical; min-height: 8rem; line-height: 1.5; }
+.field input::placeholder,
+.field textarea::placeholder { color: var(--ink-soft); }
+.field input:focus-visible,
+.field textarea:focus-visible { outline-offset: 1px; }
+.field input:user-invalid,
+.field textarea:user-invalid { border-color: var(--x-color); }
+
+.feedback-form__actions { display: flex; }
+.feedback-form .btn[disabled] { opacity: .65; cursor: progress; transform: none; box-shadow: var(--hard-shadow-sm); }
+
+.form-status {
+  padding: .9rem 1rem;
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: .98rem;
+}
+.form-status[hidden] { display: none; }
+.form-status--success { background: var(--accent); color: var(--accent-ink); }
+.form-status--error { background: var(--x-color-soft); color: var(--ink); border-color: var(--x-color); }
+.form-status:focus-visible { outline-offset: 3px; }
 
 /* -------------------------------------------------------------------- */
 /* mode picker                                                           */

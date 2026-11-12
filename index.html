@@ -221,49 +221,62 @@
   </section>
 
   <!-- ============================================================ -->
-  <!-- HOW IT WORKS                                                  -->
+  <!-- HOW TO PLAY                                                   -->
   <!-- ============================================================ -->
   <section class="how-it-works" id="how-it-works">
     <div class="wrap section">
       <div class="section__head" data-reveal>
-        <h2>Three rules, one twist</h2>
-        <p>If you can play regular tic-tac-toe, you already know 90% of this. Here's the part that changes everything.</p>
+        <h2>How to play</h2>
+        <p>Ultimate Tic-Tac-Toe is regular tic-tac-toe played on nine boards at once. Learn three rules and you're ready to play.</p>
       </div>
 
-      <div class="steps" data-reveal-group>
-        <div class="steps__thread" aria-hidden="true"></div>
+      <ol class="rules">
 
-        <div class="step" data-reveal>
-          <div class="step__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-              <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-            </svg>
+        <li class="rule" data-reveal>
+          <div class="rule__text">
+            <span class="rule__num" aria-hidden="true">1</span>
+            <h3>Board set up</h3>
+            <p>The game is played on a large 3&times;3 grid. Inside each of its 9 big squares is a standard, smaller 3&times;3 tic-tac-toe board.</p>
+            <p>That makes 9 small boards and 81 cells in total. X always goes first.</p>
           </div>
-          <h3>Place in any square</h3>
-          <p>Each of the 9 small boards works like normal tic-tac-toe — claim squares to build a line of three.</p>
-        </div>
+          <div class="rule__figs">
+            <figure class="htp-fig"><svg class="htp-svg" viewBox="0 0 210 210" role="img" aria-label="A large three by three grid where each of the nine squares contains its own small tic-tac-toe board" xmlns="http://www.w3.org/2000/svg"><rect class="frame" x="2" y="2" width="206" height="206" rx="12"/><g class="sb is-open"><rect class="sb-bg" x="9" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 14V64M49 14V64M14 29H64M14 49H64" stroke-linecap="round"/><path class="mk-x" d="M33.5 33.5L44.5 44.5M44.5 33.5L33.5 44.5" stroke-width="3.2" stroke-linecap="round" fill="none"/></g><g class="sb is-open"><rect class="sb-bg" x="75" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 14V64M115 14V64M80 29H130M80 49H130" stroke-linecap="round"/></g><g class="sb is-open"><rect class="sb-bg" x="141" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 14V64M181 14V64M146 29H196M146 49H196" stroke-linecap="round"/></g><g class="sb is-open"><rect class="sb-bg" x="9" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 80V130M49 80V130M14 95H64M14 115H64" stroke-linecap="round"/></g><g class="sb is-open"><rect class="sb-bg" x="75" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 80V130M115 80V130M80 95H130M80 115H130" stroke-linecap="round"/><path class="mk-x" d="M79.5 79.5L90.5 90.5M90.5 79.5L79.5 90.5" stroke-width="3.2" stroke-linecap="round" fill="none"/><circle class="mk-o" cx="105" cy="105" r="6" stroke-width="3.2" fill="none"/><path class="mk-x" d="M119.5 119.5L130.5 130.5M130.5 119.5L119.5 130.5" stroke-width="3.2" stroke-linecap="round" fill="none"/><circle class="mk-o" cx="125" cy="85" r="6" stroke-width="3.2" fill="none"/></g><g class="sb is-open"><rect class="sb-bg" x="141" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 80V130M181 80V130M146 95H196M146 115H196" stroke-linecap="round"/></g><g class="sb is-open"><rect class="sb-bg" x="9" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 146V196M49 146V196M14 161H64M14 181H64" stroke-linecap="round"/></g><g class="sb is-open"><rect class="sb-bg" x="75" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 146V196M115 146V196M80 161H130M80 181H130" stroke-linecap="round"/></g><g class="sb is-open"><rect class="sb-bg" x="141" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 146V196M181 146V196M146 161H196M146 181H196" stroke-linecap="round"/><circle class="mk-o" cx="151" cy="151" r="6" stroke-width="3.2" fill="none"/></g></svg><figcaption>One big grid, nine small boards.</figcaption></figure>
+          </div>
+        </li>
 
-        <div class="step" data-reveal>
-          <div class="step__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12h13M13 6l6 6-6 6"/>
-            </svg>
+        <li class="rule" data-reveal>
+          <div class="rule__text">
+            <span class="rule__num" aria-hidden="true">2</span>
+            <h3>Follow the move rule</h3>
+            <p>The first player may place in any empty cell on any of the 9 small boards.</p>
+            <p><strong>After that, your cell choice decides where your opponent must play next.</strong> Whichever position you pick inside your small board is the position of the small board your opponent has to play in. Play the bottom-right corner, and they must play in the bottom-right small board.</p>
+            <p><strong>Free turn:</strong> if you are sent to a board that is already won or full, you get a free turn and can play on any open board.</p>
+            <p class="rule__tip"><span class="rule__tip-dot" aria-hidden="true"></span>In the game, the glowing board is the one you must play in.</p>
           </div>
-          <h3>Your move sends them</h3>
-          <p>Wherever you play inside a board, your opponent must play in the matching board next — position 3 sends them to board 3.</p>
-        </div>
+          <div class="rule__figs">
+            <figure class="htp-fig"><svg class="htp-svg" viewBox="0 0 210 210" role="img" aria-label="Playing in the bottom right cell of the top left board sends your opponent to the bottom right board" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1L9 5L1 9Z" class="arrow-head"/></marker></defs><rect class="frame" x="2" y="2" width="206" height="206" rx="12"/><g class="sb is-from"><rect class="sb-bg" x="9" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 14V64M49 14V64M14 29H64M14 49H64" stroke-linecap="round"/><circle class="mk-o" cx="19" cy="19" r="6" stroke-width="3.2" fill="none"/><path class="mk-x" d="M33.5 33.5L44.5 44.5M44.5 33.5L33.5 44.5" stroke-width="3.2" stroke-linecap="round" fill="none"/><path class="mk-x" d="M53.5 53.5L64.5 64.5M64.5 53.5L53.5 64.5" stroke-width="3.2" stroke-linecap="round" fill="none"/></g><g class="sb is-dim"><rect class="sb-bg" x="75" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 14V64M115 14V64M80 29H130M80 49H130" stroke-linecap="round"/></g><g class="sb is-dim"><rect class="sb-bg" x="141" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 14V64M181 14V64M146 29H196M146 49H196" stroke-linecap="round"/></g><g class="sb is-dim"><rect class="sb-bg" x="9" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 80V130M49 80V130M14 95H64M14 115H64" stroke-linecap="round"/></g><g class="sb is-dim"><rect class="sb-bg" x="75" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 80V130M115 80V130M80 95H130M80 115H130" stroke-linecap="round"/></g><g class="sb is-dim"><rect class="sb-bg" x="141" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 80V130M181 80V130M146 95H196M146 115H196" stroke-linecap="round"/></g><g class="sb is-dim"><rect class="sb-bg" x="9" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 146V196M49 146V196M14 161H64M14 181H64" stroke-linecap="round"/></g><g class="sb is-dim"><rect class="sb-bg" x="75" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 146V196M115 146V196M80 161H130M80 181H130" stroke-linecap="round"/></g><g class="sb is-target"><rect class="sb-bg" x="141" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 146V196M181 146V196M146 161H196M146 181H196" stroke-linecap="round"/><circle class="mk-o" cx="171" cy="151" r="6" stroke-width="3.2" fill="none"/></g><circle class="ring" cx="59" cy="59" r="11"/><path class="arrow" d="M68 68L140 140" marker-end="url(#a1)"/></svg><figcaption>You play the bottom-right cell, so your opponent must play in the bottom-right board.</figcaption></figure>
+            <figure class="htp-fig"><svg class="htp-svg" viewBox="0 0 210 210" role="img" aria-label="Playing the centre cell sends your opponent to the centre board, but it is already won, so they may play in any open board" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1L9 5L1 9Z" class="arrow-head"/></marker></defs><rect class="frame" x="2" y="2" width="206" height="206" rx="12"/><g class="sb is-free"><rect class="sb-bg" x="9" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 14V64M49 14V64M14 29H64M14 49H64" stroke-linecap="round"/><circle class="mk-o" cx="19" cy="19" r="6" stroke-width="3.2" fill="none"/><path class="mk-x" d="M33.5 33.5L44.5 44.5M44.5 33.5L33.5 44.5" stroke-width="3.2" stroke-linecap="round" fill="none"/></g><g class="sb is-free"><rect class="sb-bg" x="75" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 14V64M115 14V64M80 29H130M80 49H130" stroke-linecap="round"/></g><g class="sb is-free"><rect class="sb-bg" x="141" y="9" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 14V64M181 14V64M146 29H196M146 49H196" stroke-linecap="round"/></g><g class="sb is-free"><rect class="sb-bg" x="9" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 80V130M49 80V130M14 95H64M14 115H64" stroke-linecap="round"/></g><g class="sb is-closed"><rect class="sb-bg" x="75" y="75" width="60" height="60" rx="5"/><circle class="mk-o" cx="105" cy="105" r="19" stroke-width="7" fill="none"/></g><g class="sb is-free"><rect class="sb-bg" x="141" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 80V130M181 80V130M146 95H196M146 115H196" stroke-linecap="round"/></g><g class="sb is-free"><rect class="sb-bg" x="9" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 146V196M49 146V196M14 161H64M14 181H64" stroke-linecap="round"/><path class="mk-x" d="M53.5 145.5L64.5 156.5M64.5 145.5L53.5 156.5" stroke-width="3.2" stroke-linecap="round" fill="none"/><circle class="mk-o" cx="59" cy="171" r="6" stroke-width="3.2" fill="none"/></g><g class="sb is-free"><rect class="sb-bg" x="75" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 146V196M115 146V196M80 161H130M80 181H130" stroke-linecap="round"/></g><g class="sb is-free"><rect class="sb-bg" x="141" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 146V196M181 146V196M146 161H196M146 181H196" stroke-linecap="round"/></g><circle class="ring" cx="39" cy="39" r="11"/><path class="arrow" d="M48 48L88 88" marker-end="url(#a2)"/></svg><figcaption>You play the centre cell, but the centre board is already won, so your opponent can play anywhere open.</figcaption></figure>
+          </div>
+        </li>
 
-        <div class="step" data-reveal>
-          <div class="step__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 21h8M12 17v4M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
-              <path d="M6 5H3v2a4 4 0 0 0 4 4M18 5h3v2a4 4 0 0 1-4 4"/>
-            </svg>
+        <li class="rule" data-reveal>
+          <div class="rule__text">
+            <span class="rule__num" aria-hidden="true">3</span>
+            <h3>Claim small boards to win the game</h3>
+            <p>Win a small board by getting three in a row, just like regular tic-tac-toe. That conquers the whole big square for your symbol.</p>
+            <p>The first player to claim three small boards in a row on the large board, horizontally, vertically or diagonally, wins the game.</p>
+            <p class="rule__note">A small board that fills up with no winner counts for nobody. If every board is finished and no one has a line, the game is a draw.</p>
           </div>
-          <h3>Win boards to win the game</h3>
-          <p>If that board is already won or full, they choose freely. Take three local boards in a row to win it all.</p>
-        </div>
+          <div class="rule__figs">
+            <figure class="htp-fig"><svg class="htp-svg" viewBox="0 0 150 150" role="img" aria-label="Three X marks in a row inside one small board claim that board" xmlns="http://www.w3.org/2000/svg"><rect class="frame" x="2" y="2" width="146" height="146" rx="12"/><rect class="sb-bg is-open-bg" x="15" y="15" width="120" height="120" rx="6"/><path class="sb-grid" d="M55 23V127M95 23V127M23 55H127M23 95H127" stroke-linecap="round" stroke-width="2"/><path class="mk-x" d="M25 25L45 45M45 25L25 45" stroke-width="5" stroke-linecap="round" fill="none"/><path class="mk-x" d="M65 25L85 45M85 25L65 45" stroke-width="5" stroke-linecap="round" fill="none"/><path class="mk-x" d="M105 25L125 45M125 25L105 45" stroke-width="5" stroke-linecap="round" fill="none"/><circle class="mk-o" cx="35" cy="75" r="11" stroke-width="5" fill="none"/><circle class="mk-o" cx="75" cy="75" r="11" stroke-width="5" fill="none"/><path class="mk-x" d="M65 105L85 125M85 105L65 125" stroke-width="5" stroke-linecap="round" fill="none"/><path class="win-line" d="M29 35H121" stroke-linecap="round"/></svg><figcaption>Three in a row claims the small board.</figcaption></figure>
+            <figure class="htp-fig"><svg class="htp-svg" viewBox="0 0 210 210" role="img" aria-label="Three claimed small boards in a row across the top of the big grid win the game" xmlns="http://www.w3.org/2000/svg"><rect class="frame" x="2" y="2" width="206" height="206" rx="12"/><g class="sb is-won-x"><rect class="sb-bg" x="9" y="9" width="60" height="60" rx="5"/><path class="mk-x" d="M21 21L57 57M57 21L21 57" stroke-width="7" stroke-linecap="round" fill="none"/></g><g class="sb is-won-x"><rect class="sb-bg" x="75" y="9" width="60" height="60" rx="5"/><path class="mk-x" d="M87 21L123 57M123 21L87 57" stroke-width="7" stroke-linecap="round" fill="none"/></g><g class="sb is-won-x"><rect class="sb-bg" x="141" y="9" width="60" height="60" rx="5"/><path class="mk-x" d="M153 21L189 57M189 21L153 57" stroke-width="7" stroke-linecap="round" fill="none"/></g><g class="sb is-open"><rect class="sb-bg" x="9" y="75" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 80V130M49 80V130M14 95H64M14 115H64" stroke-linecap="round"/><circle class="mk-o" cx="39" cy="85" r="6" stroke-width="3.2" fill="none"/><path class="mk-x" d="M33.5 99.5L44.5 110.5M44.5 99.5L33.5 110.5" stroke-width="3.2" stroke-linecap="round" fill="none"/></g><g class="sb is-won-o"><rect class="sb-bg" x="75" y="75" width="60" height="60" rx="5"/><circle class="mk-o" cx="105" cy="105" r="19" stroke-width="7" fill="none"/></g><g class="sb is-won-o"><rect class="sb-bg" x="141" y="75" width="60" height="60" rx="5"/><circle class="mk-o" cx="171" cy="105" r="19" stroke-width="7" fill="none"/></g><g class="sb is-open"><rect class="sb-bg" x="9" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M29 146V196M49 146V196M14 161H64M14 181H64" stroke-linecap="round"/></g><g class="sb is-open"><rect class="sb-bg" x="75" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M95 146V196M115 146V196M80 161H130M80 181H130" stroke-linecap="round"/><path class="mk-x" d="M79.5 145.5L90.5 156.5M90.5 145.5L79.5 156.5" stroke-width="3.2" stroke-linecap="round" fill="none"/></g><g class="sb is-open"><rect class="sb-bg" x="141" y="141" width="60" height="60" rx="5"/><path class="sb-grid" d="M161 146V196M181 146V196M146 161H196M146 181H196" stroke-linecap="round"/></g><path class="win-line" d="M39 39H171" stroke-linecap="round"/></svg><figcaption>Three claimed boards in a row wins the game.</figcaption></figure>
+          </div>
+        </li>
+
+      </ol>
+
+      <div class="rules__cta" data-reveal>
+        <a class="btn btn--primary" href="#play">Got it, pick a mode</a>
       </div>
     </div>
   </section>
@@ -340,6 +353,53 @@
     </div>
   </section>
 
+  <!-- ============================================================ -->
+  <!-- FEEDBACK FORM (Formspree)                                     -->
+  <!-- To connect it: replace YOUR_FORM_ID in the action below with   -->
+  <!-- the ID from your Formspree dashboard. Nothing else to change.  -->
+  <!-- ============================================================ -->
+  <section class="feedback" id="feedback">
+    <div class="wrap section">
+      <div class="section__head" data-reveal>
+        <h2>Requests &amp; complaints</h2>
+        <p>Found a bug, confused by something, or want a new feature? Tell us and we'll read it.</p>
+      </div>
+
+      <div class="feedback-card" data-reveal>
+        <form class="feedback-form" id="feedback-form" action="https://formspree.io/f/maeoylwo" method="POST">
+          <div class="field">
+            <label for="fb-name">Name</label>
+            <input type="text" id="fb-name" name="name" autocomplete="name" required maxlength="80" placeholder="Your name">
+          </div>
+
+          <div class="field">
+            <label for="fb-email">Email</label>
+            <input type="email" id="fb-email" name="email" autocomplete="email" required maxlength="120" placeholder="you@example.com">
+          </div>
+
+          <div class="field">
+            <label for="fb-message">Message</label>
+            <textarea id="fb-message" name="message" rows="5" required maxlength="2000" placeholder="What would you like to tell us?"></textarea>
+          </div>
+
+          <!-- spam trap: real people never see or fill this -->
+          <div class="visually-hidden" aria-hidden="true">
+            <label>Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label>
+          </div>
+          <input type="hidden" name="_subject" value="XT3 Ultimate Tic-Tac-Toe: new feedback">
+
+          <div class="feedback-form__actions">
+            <button class="btn btn--primary" type="submit" id="fb-submit" name="submit">
+              <span class="btn__label">Send message</span>
+            </button>
+          </div>
+
+          <div class="form-status" id="fb-status" hidden tabindex="-1"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="site-footer">
@@ -353,5 +413,6 @@
 <script src="js/animation.js"></script>
 <script src="js/online.js"></script>
 <script src="js/main.js"></script>
+<script src="js/feedback.js"></script>
 </body>
 </html>

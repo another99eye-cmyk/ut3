@@ -19,7 +19,7 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
      Play, hit Rematch -> tally carries over.
 
 
-2. [ ] Rewrite the "How to play" explanation                          (Effort: M)
+2. [x] DONE: Rewrite the "How to play" explanation                    (Effort: M)
    Why: users report it isn't clear. This is the main onboarding problem.
    - Replace the current 3 steps in index.html (#how-it-works) with:
        a. Board set up: big 3x3 grid, each square holds a small 3x3 board.
@@ -40,7 +40,7 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
      highlighted board").
 
 
-3. [ ] Feedback form (Formspree) for requests and complaints          (Effort: M)
+3. [x] DONE (add your Formspree ID): Feedback form                     (Effort: M)
    Why: you have real users giving feedback; give them a proper channel.
    - Create a form at formspree.io to get your form ID, then post to
      https://formspree.io/f/YOUR_FORM_ID
@@ -126,7 +126,10 @@ A. [ ] Online reliability: online.js uses PeerJS's free public broker
        "couldn't connect" message.
 B. [x] DONE: Fix stale meta description in pages/game.html (it says "two
        player, local" but the page also runs AI and online modes).
-C. [ ] Test what happens when the page is refreshed mid-game, especially
-       on mobile (not checked yet).
+C. [ ] TESTED: refreshing mid-game restarts the whole game in every mode
+       (two-player, AI, online) on mobile and PC. Decide if that's OK.
+       Possible fix: save the board state to sessionStorage after every
+       move and restore it on load (local and AI modes are easy; online
+       needs the host to re-sync with the guest, so it's harder).
 D. [ ] Check how strong the highlight on the active small board is, so
        players can always see where they must play.

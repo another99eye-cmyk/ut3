@@ -6,8 +6,7 @@
   .hero__grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .hero__board-stage { order: -1; }
   .ultimate-board { width: min(360px, 100%); transform: rotate(-2deg); }
-  .steps { grid-template-columns: 1fr 1fr; row-gap: 3rem; }
-  .steps__thread { display: none; }
+  .rule { grid-template-columns: 1fr; gap: 1.6rem; }
   .mode-cards { grid-template-columns: 1fr; }
 
   .ultimate-board--game { --cell: 3rem; }
@@ -23,7 +22,9 @@
   .hero__title { font-size: clamp(2.2rem, 8vw, 2.8rem); }
   .hero__actions { gap: .8rem; }
 
-  .steps { grid-template-columns: 1fr; }
+  .rule { padding: 1.4rem 1.2rem; }
+  .rule__figs { gap: 1.2rem; }
+  .feedback-card { padding: 1.4rem 1.1rem; }
 
   .mode-cards { grid-template-columns: 1fr; }
   .mode-card__pieces { position: static; margin-bottom: 1rem; }
