@@ -1,0 +1,24 @@
+1. Background Music: I'd create a folder in assets called music so assets/music which will contain some background music and when the player starts a game one of them will start to player.
+
+2. Game specific player score:
+When a new game is started the game for either of the modes is started the game shows the scores of the previous game, though they are already in scoreboard of the home page. In the game page when a new game is started the score board should be cleared
+
+3. Rules Explaination Problem:
+The users are saying that the rules explaination in the, how to play isn't clear. Use this it don't have to be specifically the same but it must follow this procedure.
+
+a. Board Set Up
+A large 3×3 grid, and inside each of the 9 big squares, draw a standard smaller 3×3 tic-tac-toe board.
+
+b. Follow the Move Rule
+The first player place in any empty spot on any of the 9 small boards. Your specific cell choice dictates where your opponent must play next: whatever relative position you pick inside your small board forces your opponent to play inside the corresponding small board on the main grid (for example, playing in the bottom-right corner sends them to the bottom-right small board). If you are sent to a board that is already won or full, you get a "free turn" and can play on any open board.
+
+c. Claim Small Boards to Win the Game
+
+Win a small board by getting three-in-a-row just like regular tic-tac-toe, which conquers that entire big square for your symbol. The first player to get three small boards in a row (horizontally, vertically, or diagonally) on the large global board wins the game
+
+(Maybe adding some visuals to explain will do some good)
+
+4. Graphics and visuals:
+a. Update the graphics and visuals of the website.
+b. Scroll-Aware Header: A navbar that shrinks, changes background opacity, or hides when scrolling down and reappears when scrolling back up to reclaim screen space.
+c. Loading and Skeleton Screens: Smooth spinners or content placeholders that make waiting times feel shorter.
