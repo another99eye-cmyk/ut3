@@ -177,6 +177,16 @@ window.TTTGame = window.TTTGame || {};
   var onlineRoom = null;
   var onlineConnected = false;
 
+  // Scores for *this visit* to the game page only. It starts at zero every
+  // time the page loads and keeps counting across Restart/Rematch. The
+  // all-time totals shown on the home page live in TTTStorage and are still
+  // updated by endGame() — the two are intentionally separate.
+  var sessionStats = {
+    twoPlayer: { p1Wins: 0, p2Wins: 0, draws: 0 },
+    ai: { playerWins: 0, aiWins: 0, draws: 0 },
+    online: { youWins: 0, opponentWins: 0, draws: 0 }
+  };
+
   var engine = new GameEngine();
   var aiThinking = false;
   var aiTimeoutId = null;
@@ -264,7 +274,7 @@ window.TTTGame = window.TTTGame || {};
   updateModeLabels();
 
   function refreshScoreboard() {
-    var stats = window.TTTStorage.getStats();
+    var stats = sessionStats;
     if (mode === "ai") {
       var humanScore = stats.ai.playerWins;
       var aiScore = stats.ai.aiWins;
@@ -531,16 +541,36 @@ window.TTTGame = window.TTTGame || {};
     if (boardWrapEl) boardWrapEl.classList.remove("is-ai-turn");
   }
 
+  /** Mirrors TTTStorage.recordResult(), but for the in-page session tally. */
+  function recordSessionResult(bucket, outcome) {
+    if (bucket === "ai") {
+      if (outcome === "player") sessionStats.ai.playerWins++;
+      else if (outcome === "ai") sessionStats.ai.aiWins++;
+      else sessionStats.ai.draws++;
+    } else if (bucket === "online") {
+      if (outcome === "you") sessionStats.online.youWins++;
+      else if (outcome === "opponent") sessionStats.online.opponentWins++;
+      else sessionStats.online.draws++;
+    } else {
+      if (outcome === "p1") sessionStats.twoPlayer.p1Wins++;
+      else if (outcome === "p2") sessionStats.twoPlayer.p2Wins++;
+      else sessionStats.twoPlayer.draws++;
+    }
+  }
+
   function endGame(winner) {
     if (mode === "ai") {
       var aiOutcome = winner === "D" ? "draw" : (winner === humanSymbol ? "player" : "ai");
       window.TTTStorage.recordResult("ai", aiOutcome);
+      recordSessionResult("ai", aiOutcome);
     } else if (mode === "online") {
       var onlineOutcome = winner === "D" ? "draw" : (winner === mySymbol ? "you" : "opponent");
       window.TTTStorage.recordResult("online", onlineOutcome);
+      recordSessionResult("online", onlineOutcome);
     } else {
       var tpOutcome = winner === "D" ? "draw" : (winner === p1Symbol ? "p1" : "p2");
       window.TTTStorage.recordResult("twoPlayer", tpOutcome);
+      recordSessionResult("twoPlayer", tpOutcome);
       // Symbols automatically swap for the *next* match — takes effect the
       // next time newGame() reads the start symbol from storage.
       window.TTTStorage.toggleTwoPlayerStartSymbol();
