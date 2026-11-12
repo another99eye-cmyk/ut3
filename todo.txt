@@ -57,16 +57,55 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
      moves to the success message.
 
 
-4. [ ] Background music                                                (Effort: M)
-   - Put tracks in assets/music (folder already exists, currently empty).
-     Use properly licensed (CC0 / royalty-free) loops, MP3, about 1-3 MB.
-   - Start a track when a game starts on game.html. Browsers often block
-     autoplay on a fresh page, so try to play, and fall back to starting
-     on the player's first tap.
-   - Add a separate music toggle (don't reuse the sound-effects toggle),
-     remember the choice in localStorage, and keep the volume low.
-   - Pause music when the pause overlay opens or the tab is hidden.
-   - Use preload="none" so it doesn't slow the page load.
+4. [ ] Background music + short win/draw/lose sounds                 (Effort: M)
+   MUSIC STYLE (it's a thinking game, so keep it calm):
+   - Instrumental only (no vocals), steady tempo, no sudden loud parts.
+   - Good styles: lo-fi / chill electronic, soft ambient, light chiptune,
+     "casual puzzle game" loops, gentle piano. Avoid: heavy drums,
+     epic/cinematic, anything dramatic or busy.
+   - Search words: "lofi", "chill puzzle game", "casual game loop",
+     "ambient electronic", "calm strategy", "thinking music".
+   - Get 3 or 4 tracks, 2-3 minutes each, similar loudness, MP3 about
+     128-160 kbps (1-3 MB each). Preview them while playing a real game.
+   WHERE TO GET THEM (check the license on every track):
+   - Pixabay Music (pixabay.com/music): free, no credit needed. Don't
+     offer the files as standalone downloads. Easiest option.
+   - OpenGameArt.org: filter by CC0 (no credit) or CC-BY (credit needed).
+   - itch.io: search "free music loop pack", look for CC0 packs.
+   - Incompetech (Kevin MacLeod): CC BY 4.0, so you MUST credit him.
+   - Free Music Archive: license differs per track, read each one.
+   - Keep a list of: file name, title, artist, source link, license.
+     Put required credits on the site (the footer redesign in item 8
+     is a good place for a "Music credits" line).
+   FILES: put them in assets/music. A static site can't list a folder,
+     so the code will read a short list of file names (a manifest) that
+     you update when you add or remove a track.
+   TRANSITIONS (how tracks start and change):
+   - Start: fade the volume in over about 1.5 s when a game starts (no
+     sudden blast). Start on a random track.
+   - Track ends: when it finishes, fade in the NEXT track (pick a
+     different one, shuffle). A short gap between tracks is fine.
+     (Optional later: overlap the last 2-3 s for a crossfade.)
+   - Rematch / Restart: music keeps playing, it does not restart.
+   - Pause overlay or hidden tab: fade out and pause; fade in on resume.
+   - Music toggle: fade out/in instead of cutting.
+   AUTOPLAY: browsers often block sound on a fresh page. Try to play, and
+     if blocked, start on the player's first tap.
+   TOGGLE: separate music toggle (not the sound-effects one), remembered
+     in localStorage. Keep the volume low (about 25-35%).
+   WIN / DRAW / LOSE: add short sounds (2-5 seconds), NOT full tracks.
+   - Win: bright, short fanfare. Draw: neutral, calm. Lose: soft and
+     gentle (don't punish the player).
+   - Play it on top of the music: lower the background music while it
+     plays, then bring it back (or when Rematch is pressed).
+   - Which sound plays: vs AI = win if you win, lose if the AI wins.
+     Online = win/lose for each player. Two-player = win sound for
+     whoever wins (nobody "loses"). Draw = draw sound.
+   - The site already has synthesized win and draw sounds (no lose
+     yet). Keep them as the fallback if a sound file is missing.
+   - Sources: Pixabay sound effects, Kenney.nl (CC0), Freesound
+     (check each license).
+   - Do the background music first, the win/draw/lose sounds second.
 
 
 5. [ ] Loader for index.html and game.html                            (Effort: M)
@@ -113,6 +152,11 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
    Do this last: it touches CSS everywhere. Decide a direction FIRST
    (palette, board style, piece style, typography) before coding.
    - Update the look of index.html and game.html.
+   - Text review: go through all the wording and typography on both
+     pages (headings, button labels, descriptions, messages, font sizes,
+     line spacing, contrast) and make it clearer, shorter and consistent.
+   - Footer redesign: new layout and style for the footer (links such as
+     How to play / Modes / Feedback, music credits, short tagline).
    - Keep everything on CSS variables in css/theme.css so light/dark mode
      and the new diagrams, loader and header all follow.
    - Re-check mobile layouts (css/responsive.css) after changes.
