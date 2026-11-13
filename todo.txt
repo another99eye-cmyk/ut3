@@ -57,7 +57,7 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
      moves to the success message.
 
 
-4. [ ] Background music + short win/draw/lose sounds                 (Effort: M)
+4. [x] BUILT (add your mp3 files to assets/music): Music + win/lose sounds  (Effort: M)
    MUSIC STYLE (it's a thinking game, so keep it calm):
    - Instrumental only (no vocals), steady tempo, no sudden loud parts.
    - Good styles: lo-fi / chill electronic, soft ambient, light chiptune,
@@ -152,7 +152,9 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
    Do this last: it touches CSS everywhere. Decide a direction FIRST
    (palette, board style, piece style, typography) before coding.
    - Update the look of index.html and game.html.
-   - Text review: go through all the wording and typography on both
+   - Text review: FIRST PASS DONE (home page, mode cards, form, game
+     messages). Still to do: typography (sizes, spacing, contrast).
+     Original plan: go through all the wording and typography on both
      pages (headings, button labels, descriptions, messages, font sizes,
      line spacing, contrast) and make it clearer, shorter and consistent.
    - Footer redesign: new layout and style for the footer (links such as

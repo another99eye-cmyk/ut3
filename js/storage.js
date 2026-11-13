@@ -54,6 +54,13 @@
       return safeSet("sound", on);
     },
 
+    getMusicOn: function () {
+      return safeGet("music", true);
+    },
+    setMusicOn: function (on) {
+      return safeSet("music", on);
+    },
+
     /* mode: "two-player" | "ai"
        difficulty: "easy" | "medium" | "hard" | null
        playerSymbol: "X" | "O" — the human's chosen symbol in AI mode,

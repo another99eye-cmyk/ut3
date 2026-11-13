@@ -171,6 +171,7 @@
         if (kind === "place") blip(520, 0.12, "triangle", 0.08);
         else if (kind === "invalid") blip(140, 0.15, "square", 0.05);
         else if (kind === "win") { blip(660, 0.18, "triangle", 0.09); setTimeout(function () { blip(880, 0.25, "triangle", 0.09); }, 140); }
+        else if (kind === "lose") { blip(330, 0.22, "triangle", 0.08); setTimeout(function () { blip(220, 0.4, "triangle", 0.08); }, 170); }
         else if (kind === "draw") blip(300, 0.3, "sine", 0.06);
         else if (kind === "click") blip(440, 0.08, "triangle", 0.05);
       } catch (e) { /* audio unavailable, fail silently */ }

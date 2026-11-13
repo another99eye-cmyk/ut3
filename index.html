@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>XT³ — Ultimate Tic-Tac-Toe</title>
-<meta name="description" content="A tic-tac-toe board made of tic-tac-toe boards. Play a friend or an AI across three difficulty levels." />
+<meta name="description" content="Tic-tac-toe, but every square is its own tic-tac-toe game. Play a friend, take on the AI, or invite someone online." />
 
 <script>
   // Set the theme before any CSS paints, so there's no flash of the wrong theme.
@@ -88,15 +88,16 @@
           Win the <span class="hl-x">whole</span> <span class="hl-o">thing</span>.
         </h1>
         <p class="hero__lede">
-          Ultimate Tic-Tac-Toe is the same game you know, nested nine times over.
-          Every move you make sends your opponent to a specific board — so the
-          square you pick matters as much as the line you're building.
+          It's the tic-tac-toe you already know, played on nine boards at once.
+          Here's the twist: the square you pick decides which board your
+          opponent has to play on next. So every move does two jobs. It builds
+          your line, and it picks where they go.
         </p>
         <div class="hero__actions">
           <a class="btn btn--primary" href="#play">Play now</a>
-          <a class="btn" href="#how-it-works">How it works</a>
+          <a class="btn" href="#how-it-works">How to play</a>
         </div>
-        <p class="hero__note">No account, no download — just open a board and go.</p>
+        <p class="hero__note">No sign-up, no download. Pick a mode and start playing.</p>
       </div>
 
       <div class="hero__board-stage">
@@ -167,7 +168,7 @@
     <div class="wrap section" style="padding-block:3rem;">
       <div class="section__head" data-reveal>
         <h2>Scoreboard</h2>
-        <p>Tracked automatically as you play. Nothing here resets just from coming back to this page.</p>
+        <p>Every finished game lands here automatically. Your totals are saved on this device.</p>
       </div>
 
       <div class="score-card" data-reveal>
@@ -287,8 +288,8 @@
   <section class="mode-picker" id="play">
     <div class="wrap">
       <div class="section__head" data-reveal>
-        <h2>Pick how you're playing</h2>
-        <p>Choose a mode below — your pick is saved, and carries straight into the board.</p>
+        <h2>Who are you playing today?</h2>
+        <p>Choose a mode below. We'll remember your pick and take you straight to the board.</p>
       </div>
 
       <div class="mode-cards" data-reveal-group>
@@ -298,7 +299,7 @@
           </div>
           <span class="mode-card__badge">local · 2 players</span>
           <h3>Two Player</h3>
-          <p>Pass the same device back and forth. X and O both played by humans.</p>
+          <p>One device, two players. Take turns and see who has the better plan.</p>
         </div>
 
         <div class="mode-card" data-mode="ai" role="button" tabindex="0" aria-pressed="false" data-reveal>
@@ -307,7 +308,7 @@
           </div>
           <span class="mode-card__badge">vs computer</span>
           <h3>Play the AI</h3>
-          <p>Choose your side, then pick a difficulty to match your level.</p>
+          <p>Pick your side and a difficulty, then see if you can outsmart the computer.</p>
 
           <div class="difficulty-panel">
             <div class="difficulty-panel__inner">
@@ -330,7 +331,7 @@
           </div>
           <span class="mode-card__badge">play a friend, anywhere</span>
           <h3>Online</h3>
-          <p>Create a room and send the link to a friend, or join one they've sent you. No account needed.</p>
+          <p>Make a room and send the link to a friend, or join one they sent you. No sign-up needed.</p>
 
           <div class="difficulty-panel">
             <div class="difficulty-panel__inner">
@@ -362,11 +363,11 @@
     <div class="wrap section">
       <div class="section__head" data-reveal>
         <h2>Requests &amp; complaints</h2>
-        <p>Found a bug, confused by something, or want a new feature? Tell us and we'll read it.</p>
+        <p>Found a bug, got stuck on a rule, or have an idea to make the game better? Let us know.</p>
       </div>
 
       <div class="feedback-card" data-reveal>
-        <form class="feedback-form" id="feedback-form" action="https://formspree.io/f/maeoylwo" method="POST">
+        <form class="feedback-form" id="feedback-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
           <div class="field">
             <label for="fb-name">Name</label>
             <input type="text" id="fb-name" name="name" autocomplete="name" required maxlength="80" placeholder="Your name">
@@ -379,7 +380,7 @@
 
           <div class="field">
             <label for="fb-message">Message</label>
-            <textarea id="fb-message" name="message" rows="5" required maxlength="2000" placeholder="What would you like to tell us?"></textarea>
+            <textarea id="fb-message" name="message" rows="5" required maxlength="2000" placeholder="What's on your mind?"></textarea>
           </div>
 
           <!-- spam trap: real people never see or fill this -->
@@ -389,7 +390,7 @@
           <input type="hidden" name="_subject" value="XT3 Ultimate Tic-Tac-Toe: new feedback">
 
           <div class="feedback-form__actions">
-            <button class="btn btn--primary" type="submit" id="fb-submit" name="submit">
+            <button class="btn btn--primary" type="submit" id="fb-submit">
               <span class="btn__label">Send message</span>
             </button>
           </div>

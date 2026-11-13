@@ -21,8 +21,8 @@
   var idleText = label.textContent;
   var sending = false;
 
-  var MSG_SUCCESS = "Thanks! Your message was sent. We'll read it soon.";
-  var MSG_ERROR = "Sorry, your message couldn't be sent. Please check your connection and try again.";
+  var MSG_SUCCESS = "Message sent. Thanks for helping make XT\u00B3 better!";
+  var MSG_ERROR = "Hmm, that didn't go through. Check your connection and try again.";
   var MSG_NOT_CONNECTED = "The feedback form isn't connected yet. Please try again later.";
 
   function showStatus(kind, text) {

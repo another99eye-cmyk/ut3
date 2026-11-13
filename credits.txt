@@ -1,0 +1,22 @@
+MUSIC CREDITS
+=============
+Put the six audio files in this folder with EXACTLY these names:
+
+  groundbird-minimal-shift.mp3   (background)
+  coding-night.mp3               (background)
+  many-moons-of-saturn.mp3       (background)
+  chill-music.mp3                (background)
+  win.mp3                        (plays when you win)
+  game-over.mp3                  (plays when you lose)
+
+For each file, fill in where it came from. If a license says you must give
+credit (for example CC BY), add that credit to the website footer too.
+
+file                          | title | artist | source link | license
+------------------------------|-------|--------|-------------|--------
+groundbird-minimal-shift.mp3  |       |        |             |
+coding-night.mp3              |       |        |             |
+many-moons-of-saturn.mp3      |       |        |             |
+chill-music.mp3               |       |        |             |
+win.mp3                       |       |        |             |
+game-over.mp3                 |       |        |             |

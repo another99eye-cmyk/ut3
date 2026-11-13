@@ -213,6 +213,7 @@ window.TTTGame = window.TTTGame || {};
     pauseBtn: document.getElementById("pause-btn"),
     bottomNav: document.getElementById("bottom-nav"),
     soundToggle: document.getElementById("sound-toggle"),
+    musicToggle: document.getElementById("music-toggle"),
     themeToggle: document.querySelector(".theme-toggle"),
     overlay: document.getElementById("victory-overlay"),
     overlayIcon: document.getElementById("victory-icon"),
@@ -382,7 +383,7 @@ window.TTTGame = window.TTTGame || {};
     } else if (mode === "ai") {
       els.turnLabel.textContent = engine.currentPlayer === aiSymbol
         ? "AI is thinking\u2026"
-        : "Player\u2019s turn";
+        : "Your turn";
     } else if (mode === "online") {
       if (!onlineConnected) {
         els.turnLabel.textContent = "Waiting to connect\u2026";
@@ -541,6 +542,16 @@ window.TTTGame = window.TTTGame || {};
     if (boardWrapEl) boardWrapEl.classList.remove("is-ai-turn");
   }
 
+  /** Which sound to play for the finished game, from this player's point of
+   *  view: "win", "lose" or "draw". (Two players on one device: there is no
+   *  "lose", whoever wins gets the win sound.) */
+  function resultCue(winner) {
+    if (winner === "D") return "draw";
+    if (mode === "ai") return winner === humanSymbol ? "win" : "lose";
+    if (mode === "online") return winner === mySymbol ? "win" : "lose";
+    return "win";
+  }
+
   /** Mirrors TTTStorage.recordResult(), but for the in-page session tally. */
   function recordSessionResult(bucket, outcome) {
     if (bucket === "ai") {
@@ -581,10 +592,10 @@ window.TTTGame = window.TTTGame || {};
 
     if (winner !== "D") {
       window.TTTAnimation && window.TTTAnimation.celebrateGlobalWin(boardEl, winner);
-      window.TTTSound && window.TTTSound.play("win");
-    } else {
-      window.TTTSound && window.TTTSound.play("draw");
     }
+    var cue = resultCue(winner);
+    if (window.TTTMusic) window.TTTMusic.playResult(cue);
+    else if (window.TTTSound) window.TTTSound.play(cue);
 
     setTimeout(function () { showOverlay(winner); }, 500);
   }
@@ -594,12 +605,22 @@ window.TTTGame = window.TTTGame || {};
     requestAnimationFrame(function () { els.overlay.classList.add("victory-overlay--show"); });
     if (winner === "D") {
       els.overlayTitle.textContent = "It\u2019s a draw";
-      els.overlaySub.textContent = "Nobody claimed the ultimate board. Try again?";
+      els.overlaySub.textContent = "Nobody got three boards in a row. Rematch?";
       els.overlayIcon.innerHTML = '<span class="draw-face" aria-hidden="true">\u2022 \u2022</span>';
     } else {
       var winnerName = winner === "X" ? els.nameX.textContent : els.nameO.textContent;
-      els.overlayTitle.textContent = winnerName + " wins!";
-      els.overlaySub.textContent = "Three boards in a row across the ultimate grid.";
+      var youWon = (mode === "ai" && winner === humanSymbol) ||
+                   (mode === "online" && winner === mySymbol);
+      els.overlayTitle.textContent = youWon ? "You win!" : winnerName + " wins!";
+      if (youWon) {
+        els.overlaySub.textContent = "Three boards in a row. Nicely played!";
+      } else if (mode === "ai") {
+        els.overlaySub.textContent = "The AI took this one. Fancy a rematch?";
+      } else if (mode === "online") {
+        els.overlaySub.textContent = "Your opponent got this one. Rematch?";
+      } else {
+        els.overlaySub.textContent = "Three boards in a row. Nicely played!";
+      }
       els.overlayIcon.innerHTML = markerSVG(winner);
     }
     announce(els.overlayTitle.textContent);
@@ -611,6 +632,7 @@ window.TTTGame = window.TTTGame || {};
   }
 
   function newGame() {
+    window.TTTMusic && window.TTTMusic.stopResult();
     clearPendingAiTurn();
     hideOverlay();
     if (mode === "two-player") {
@@ -753,6 +775,7 @@ window.TTTGame = window.TTTGame || {};
   function pauseGame() {
     if (paused || engine.globalStatus) return;
     paused = true;
+    window.TTTMusic && window.TTTMusic.setPaused(true);
     clearPendingAiTurn();
     if (els.bottomNav) els.bottomNav.classList.add("bottom-nav--disabled");
     showPauseOverlay();
@@ -761,6 +784,7 @@ window.TTTGame = window.TTTGame || {};
   function resumeGame() {
     if (!paused) return;
     paused = false;
+    window.TTTMusic && window.TTTMusic.setPaused(false);
     hidePauseOverlay();
     if (els.bottomNav) els.bottomNav.classList.remove("bottom-nav--disabled");
     maybeTakeAiTurn();
@@ -802,7 +826,7 @@ window.TTTGame = window.TTTGame || {};
 
   function initOnline() {
     if (!window.TTTOnline) {
-      showOnlineOverlay("Can\u2019t connect", "Something didn\u2019t load correctly. Try reloading the page.", null);
+      showOnlineOverlay("Can\u2019t connect", "Something didn\u2019t load properly. Try refreshing the page.", null);
       return;
     }
     if (!onlineRoomCode) {
@@ -828,7 +852,7 @@ window.TTTGame = window.TTTGame || {};
 
     onlineRoom = window.TTTOnline.createRoom({
       onHosted: function (code) {
-        showOnlineOverlay("Room ready", "Share this code or link with a friend to start.", code);
+        showOnlineOverlay("Your room is ready", "Send this code or link to a friend. The game starts as soon as they join.", code);
       },
       onConnected: function () {
         onlineConnected = true;
@@ -846,7 +870,7 @@ window.TTTGame = window.TTTGame || {};
       onDisconnected: function () {
         onlineConnected = false;
         renderTurn();
-        showOnlineOverlay("Opponent disconnected", "They'll need a fresh invite link to rejoin.", null);
+        showOnlineOverlay("Your opponent left", "They\u2019ll need a fresh invite link to jump back in.", null);
       },
       onError: function (message) {
         showOnlineOverlay("Connection problem", message, null);
@@ -894,6 +918,23 @@ window.TTTGame = window.TTTGame || {};
       els.soundToggle.classList.toggle("is-muted", !next);
       if (next) window.TTTSound && window.TTTSound.play("click");
     });
+  }
+
+  if (els.musicToggle) {
+    if (!window.TTTMusic) {
+      els.musicToggle.hidden = true;
+    } else {
+      var musicOn = window.TTTMusic.isEnabled();
+      els.musicToggle.setAttribute("aria-pressed", String(musicOn));
+      els.musicToggle.classList.toggle("is-muted", !musicOn);
+      els.musicToggle.addEventListener("click", function () {
+        var next = !window.TTTMusic.isEnabled();
+        window.TTTMusic.setEnabled(next);
+        els.musicToggle.setAttribute("aria-pressed", String(next));
+        els.musicToggle.classList.toggle("is-muted", !next);
+      });
+      window.TTTMusic.start();
+    }
   }
 
   if (els.themeToggle) {
