@@ -1,0 +1,231 @@
+/* ==========================================================================
+   hero-device.css — the home-page board lives on a device that loops:
+   phone -> full turn -> pause -> monitor -> hold -> full turn -> pause -> phone
+   Every timed piece shares --loop, so they all stay in sync.
+   Percent marks (of the loop):
+     0-12.5 phone  | 12.5-23.75 turn | 23.75-32.5 wait | 32.5-41.25 phone->monitor
+     41.25-56.25 monitor | 56.25-67.5 turn | 67.5-72.5 wait | 72.5-81.25 monitor->phone
+   ========================================================================== */
+
+.device-stage {
+  --loop: 16s;
+  /* spin axis for the two full turns: "0 0 1" spins the device in the screen
+     plane (z axis). Use "0 1 0" for a coin-style flip around the y axis. */
+  --spin-axis: 0 0 1;
+  --phone-w: 17em;  --phone-h: 29em;  --phone-r: 2.6em;
+  --mon-w: 30em;    --mon-h: 20em;    --mon-r: 1em;
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: calc(var(--phone-h) + 3em);
+  font-size: min(16px, 3vw);   /* everything below is in em, so the whole device scales together */
+  perspective: 1400px;
+}
+
+.device-stage__float {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  animation: device-float 6s ease-in-out infinite;
+}
+
+.device { display: grid; place-items: center; animation: device-turn var(--loop) ease-in-out infinite; }
+
+/* ---- the shell: phone by default, reshaped to a monitor by the keyframes ---- */
+.device__shell {
+  position: relative;
+  display: flex;
+  width: var(--phone-w);
+  height: var(--phone-h);
+  padding: .7em;
+  border: var(--border-w-lg) solid var(--line);
+  border-radius: var(--phone-r);
+  background: var(--paper);
+  animation: device-shape var(--loop) infinite;
+}
+
+.device__notch {
+  position: absolute;
+  z-index: 2;
+  top: 1em;
+  left: 50%;
+  width: 4.6em;
+  height: 1.1em;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: var(--line);
+  animation: device-fade var(--loop) infinite;
+}
+
+.device__screen {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  container-type: size;   /* lets the board size itself from the screen (cqw / cqh) */
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 3px solid var(--line);
+  border-radius: calc(var(--phone-r) - .7em);
+  background: var(--bg);
+  animation: device-screen var(--loop) infinite;
+}
+
+/* monitor neck + base, tucked away while it's a phone */
+.device__stand {
+  position: absolute;
+  z-index: -1;
+  top: 100%;
+  left: 50%;
+  width: 7em;
+  height: 3.2em;
+  margin: -.2em 0 0 -3.5em;
+  transform-origin: 50% 0;
+  scale: 1 0;
+  opacity: 0;
+  animation: device-stand var(--loop) infinite;
+}
+.device__stand::before,
+.device__stand::after {
+  content: "";
+  position: absolute;
+  background: var(--paper);
+  border: 3px solid var(--line);
+}
+.device__stand::before { top: 0; left: 50%; width: 1.6em; height: 2.4em; margin-left: -.8em; border-top: 0; }
+.device__stand::after { left: 0; right: 0; bottom: 0; height: .9em; border-radius: .45em; }
+
+/* ---- the board, resized to fit whichever screen it's on ---- */
+.hero__board-stage .device__screen .ultimate-board {
+  width: min(92cqw, 94cqh);
+  flex: none;
+  gap: .35em;
+  padding: .35em;
+  border-width: 3px;
+  border-radius: .9em;
+  box-shadow: none;
+  transform: none;
+  animation: none;
+}
+.device__screen .local-board { position: relative; gap: 2px; padding: .25em; border-width: 1.5px; border-radius: .45em; }
+
+/* the little pieces pop in one after another (--n is set in js/animation.js) */
+.device__screen .cell svg {
+  animation: pop-in .45s cubic-bezier(.34, 1.56, .64, 1) both;
+  animation-delay: calc(.35s + var(--n, 0) * 55ms);
+}
+
+/* glow on the active board: fade a static glow in and out (opacity runs on the
+   GPU) instead of animating box-shadow, which repaints every frame */
+.device__screen .local-board--active { z-index: 1; animation: none; box-shadow: 0 0 0 2px var(--line); }
+.device__screen .local-board--active::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 1.6em .25em color-mix(in srgb, var(--accent) 85%, transparent);
+  animation: device-glow 2.2s ease-in-out infinite;
+}
+
+/* ---- little in-screen labels, only shown while it's a phone ---- */
+.device__hud {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: .9em;
+  margin: 0;
+  padding: .5em .9em;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  font: 600 .72em/1 var(--font-mono);
+  white-space: nowrap;
+  animation: device-fade var(--loop) infinite;
+}
+.device__hud--top { top: 2.6em; gap: .45em; }
+.device__hud--bottom { bottom: 1.8em; }
+.device__hud span { display: inline-flex; align-items: center; gap: .35em; }
+.device__hud svg { width: 1.5em; height: 1.5em; }
+
+.device-stage__shadow {
+  position: absolute;
+  bottom: .4em;
+  left: 50%;
+  width: 52%;
+  height: 1.2em;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: rgb(var(--shadow-color) / .16);
+  animation: device-shadow 6s ease-in-out infinite;
+}
+
+/* ---- keyframes ---- */
+@keyframes device-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -.7em; }
+}
+@keyframes device-shadow {
+  50% { scale: .8 1; opacity: .6; }
+}
+
+/* the two full turns, with a small dip in size so a spinning monitor stays in its column */
+@keyframes device-turn {
+  0%, 12.5%   { rotate: var(--spin-axis) 0deg; scale: 1; animation-timing-function: cubic-bezier(.6, 0, .2, 1); }
+  18.1%       { scale: .84; }
+  23.75%, 56.25% { rotate: var(--spin-axis) 360deg; scale: 1; animation-timing-function: cubic-bezier(.6, 0, .2, 1); }
+  61.9%       { scale: .84; }
+  67.5%, 100% { rotate: var(--spin-axis) 720deg; scale: 1; }
+}
+
+@keyframes device-shape {
+  0%, 32.5% {
+    width: var(--phone-w); height: var(--phone-h); border-radius: var(--phone-r);
+    animation-timing-function: cubic-bezier(.34, 1.3, .64, 1);
+  }
+  41.25%, 72.5% {
+    width: var(--mon-w); height: var(--mon-h); border-radius: var(--mon-r);
+    animation-timing-function: cubic-bezier(.34, 1.3, .64, 1);
+  }
+  81.25%, 100% { width: var(--phone-w); height: var(--phone-h); border-radius: var(--phone-r); }
+}
+
+@keyframes device-screen {
+  0%, 32.5%     { border-radius: calc(var(--phone-r) - .7em); animation-timing-function: ease-in-out; }
+  41.25%, 72.5% { border-radius: calc(var(--mon-r) - .7em); animation-timing-function: ease-in-out; }
+  81.25%, 100%  { border-radius: calc(var(--phone-r) - .7em); }
+}
+
+/* notch + labels: shown as a phone, gone as a monitor */
+@keyframes device-fade {
+  0%, 30%   { opacity: 1; }
+  36%, 76%  { opacity: 0; }
+  84%, 100% { opacity: 1; }
+}
+
+@keyframes device-stand {
+  0%, 38%   { scale: 1 0; opacity: 0; }
+  46%, 68%  { scale: 1 1; opacity: 1; }
+  74%, 100% { scale: 1 0; opacity: 0; }
+}
+
+@keyframes device-glow {
+  0%, 100% { opacity: .3; }
+  50% { opacity: 1; }
+}
+
+/* stop the loop while the device is scrolled out of view (set in js/animation.js) */
+.device-stage.is-paused,
+.device-stage.is-paused *,
+.device-stage.is-paused *::before,
+.device-stage.is-paused *::after { animation-play-state: paused !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .device-stage *, .device-stage *::before, .device-stage *::after { animation: none !important; }
+}

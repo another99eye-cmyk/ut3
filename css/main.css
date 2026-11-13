@@ -3,7 +3,7 @@
    ========================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scrollbar-gutter: stable; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
@@ -98,18 +98,42 @@ button { font-family: inherit; cursor: pointer; }
   transition: padding .25s ease;
 }
 
-/* scroll-aware header: shrinks and firms up once you scroll, slides away
-   while you scroll down, and comes back as soon as you scroll up */
+/* scroll-aware header (home page): shrinks and firms up once you scroll,
+   slides away while you scroll down, and comes back as soon as you scroll up.
+   It is fixed (out of the document flow) and the page gets a matching
+   padding-top, so shrinking/hiding it never moves the content underneath.
+   That layout shift is what used to make the first bit of scrolling stutter. */
+:root {
+  --header-h: 5.75rem;
+  --header-h-small: 4.5rem;
+}
+
 .site-header {
   transition: transform .3s var(--ease-snap, ease), background-color .25s ease, box-shadow .25s ease;
 }
-.site-header.is-scrolled {
+.site-header--scroll {
+  position: fixed;
+  inset: 0 0 auto 0;
+  will-change: transform;   /* get the header onto its own layer before the first scroll */
+  contain: layout style;
+}
+.site-header--scroll + main { padding-top: calc(var(--header-h) + var(--border-w)); }
+.site-header--scroll .site-header__bar {
+  height: var(--header-h);
+  padding-block: 0;
+  transition: height .25s var(--ease-snap, ease);
+}
+.site-header--scroll .logo {
+  transform-origin: left center;
+  transition: transform .25s var(--ease-snap, ease);
+}
+.site-header--scroll.is-scrolled {
   background: color-mix(in srgb, var(--bg) 96%, transparent);
   box-shadow: 0 3px 0 rgb(var(--shadow-color) / .12);
 }
-.site-header.is-scrolled .site-header__bar { padding-block: .5rem; }
-.site-header.is-scrolled .logo { font-size: 1.3rem; }
-.site-header.is-hidden { transform: translateY(-100%); }
+.site-header--scroll.is-scrolled .site-header__bar { height: var(--header-h-small); }
+.site-header--scroll.is-scrolled .logo { transform: scale(.87); }
+.site-header--scroll.is-hidden { transform: translateY(calc(-100% - 6px)); }
 
 .logo {
   display: flex;
@@ -118,7 +142,6 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 600;
-  transition: font-size .25s ease;
 }
 
 .logo__mark {
@@ -557,7 +580,7 @@ button { font-family: inherit; cursor: pointer; }
 /* -------------------------------------------------------------------- */
 
 .mode-dialog {
-  width: min(460px, calc(100vw - 2rem));
+  width: min(460px, calc(100% - 2rem));
   max-width: none;
   padding: 0;
   margin: auto;
@@ -575,6 +598,7 @@ button { font-family: inherit; cursor: pointer; }
   justify-items: start;
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 2.1rem 1.9rem 1.8rem;
   background: var(--paper);
   border: var(--border-w-lg) solid var(--line);
@@ -625,6 +649,20 @@ button { font-family: inherit; cursor: pointer; }
 /* no page scrolling behind an open pop-up */
 body:has(dialog[open]) { overflow: hidden; }
 
+/* phones: pin the pop-up near the top so the on-screen keyboard doesn't cover the room-code field */
+@media (max-width: 720px) {
+  .mode-dialog { margin-block: max(1rem, env(safe-area-inset-top)) auto; }
+  .mode-dialog__card { max-height: calc(100dvh - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+}
+
+/* short screens (phones on their side): tighten the card so it needs less scrolling */
+@media (max-height: 560px) {
+  .mode-dialog .mode-dialog__card { gap: .7rem; padding-block: 1.2rem 1.1rem; }
+  .mode-dialog .mode-dialog__card h3 { font-size: 1.5rem; }
+  .mode-dialog .mode-dialog__card .mode-card__badge { display: none; }
+  .online-panel__divider { margin: .6rem 0; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .mode-dialog[open] .mode-dialog__card { animation: overlay-card-in .3s var(--ease-pop, ease) both; }
   .mode-dialog[open]::backdrop { animation: overlay-fade-in .2s ease both; }
@@ -638,6 +676,8 @@ body:has(dialog[open]) { overflow: hidden; }
   display: flex;
   flex-direction: column;
   gap: .1rem;
+  width: 100%;   /* the card centres/shrinks its children, so without this the panel only ever got as wide as the join row */
+  min-width: 0;
 }
 
 .online-panel__create { width: 100%; justify-content: center; }
@@ -662,14 +702,15 @@ body:has(dialog[open]) { overflow: hidden; }
 
 .online-panel__join {
   display: flex;
+  flex-wrap: wrap;   /* the Join button drops under the input on very narrow screens instead of squashing it */
   gap: .6rem;
 }
 
 .online-panel__input {
-  flex: 1;
+  flex: 1 1 9rem;
   min-width: 0;
   font-family: var(--font-mono);
-  font-size: .95rem;
+  font-size: 1rem;   /* 16px: anything smaller makes iOS Safari zoom the page on focus */
   letter-spacing: .1em;
   text-transform: uppercase;
   padding: .7rem .9rem;
@@ -679,6 +720,7 @@ body:has(dialog[open]) { overflow: hidden; }
   color: var(--ink);
 }
 .online-panel__input::placeholder { color: var(--ink-soft); letter-spacing: normal; text-transform: none; }
+.online-panel__join .btn { flex: 0 0 auto; justify-content: center; }
 .online-panel__input:focus-visible { outline-offset: 1px; }
 
 /* -------------------------------------------------------------------- */

@@ -65,6 +65,21 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
+  /* hero device: stagger the pieces popping in, and pause the loop when it's off screen */
+  function initDevice() {
+    var stage = document.querySelector("[data-device-stage]");
+    if (!stage) return;
+
+    stage.querySelectorAll(".cell svg").forEach(function (svg, i) {
+      svg.style.setProperty("--n", i);
+    });
+
+    if (!("IntersectionObserver" in window)) return;
+    new IntersectionObserver(function (entries) {
+      stage.classList.toggle("is-paused", !entries[entries.length - 1].isIntersecting);
+    }).observe(stage);
+  }
+
   /* ---------------------------------------------------------------- */
   /* game-page effects                                                  */
   /* ---------------------------------------------------------------- */
@@ -182,6 +197,7 @@
     init: function () {
       initReveal();
       initParallax();
+      initDevice();
     },
     prefersReducedMotion: prefersReducedMotion,
     boardEntrance: boardEntrance,
