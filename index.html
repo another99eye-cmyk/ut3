@@ -129,66 +129,72 @@
           <div class="device-stage__float">
             <div class="device">
               <div class="device__shell">
-                <span class="device__notch" aria-hidden="true"></span>
-                <div class="device__screen">
-                  <p class="device__hud device__hud--top" aria-hidden="true"><svg viewBox="0 0 40 40"><use href="#glyph-o"/></svg>plays in the glowing board</p>
-                  <div class="ultimate-board" role="img" aria-label="Decorative preview of the nested Ultimate Tic-Tac-Toe board">
-                    <!-- board 1 -->
-                    <div class="local-board">
-                      <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
-                      <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+                <div class="device__front">
+                  <span class="device__notch" aria-hidden="true"></span>
+                  <div class="device__screen">
+                    <p class="device__hud device__hud--top" aria-hidden="true"><svg viewBox="0 0 40 40"><use href="#glyph-o"/></svg>plays in the glowing board</p>
+                    <div class="ultimate-board" role="img" aria-label="Decorative preview of the nested Ultimate Tic-Tac-Toe board">
+                      <!-- board 1 -->
+                      <div class="local-board">
+                        <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+                        <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+                      </div>
+                      <!-- board 2 : won by X -->
+                      <div class="local-board local-board--won-x">
+                        <div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+                        <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
+                      </div>
+                      <!-- board 3 -->
+                      <div class="local-board">
+                        <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div>
+                        <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+                        <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+                      </div>
+                      <!-- board 4 -->
+                      <div class="local-board">
+                        <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                      </div>
+                      <!-- board 5 : active -->
+                      <div class="local-board local-board--active">
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                      </div>
+                      <!-- board 6 -->
+                      <div class="local-board">
+                        <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+                        <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                      </div>
+                      <!-- board 7 -->
+                      <div class="local-board">
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                      </div>
+                      <!-- board 8 : won by O -->
+                      <div class="local-board local-board--won-o">
+                        <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+                        <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
+                        <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
+                      </div>
+                      <!-- board 9 -->
+                      <div class="local-board">
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
+                        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+                      </div>
                     </div>
-                    <!-- board 2 : won by X -->
-                    <div class="local-board local-board--won-x">
-                      <div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
-                      <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
-                    </div>
-                    <!-- board 3 -->
-                    <div class="local-board">
-                      <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div>
-                      <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
-                      <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
-                    </div>
-                    <!-- board 4 -->
-                    <div class="local-board">
-                      <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                    </div>
-                    <!-- board 5 : active -->
-                    <div class="local-board local-board--active">
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                    </div>
-                    <!-- board 6 -->
-                    <div class="local-board">
-                      <div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
-                      <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                    </div>
-                    <!-- board 7 -->
-                    <div class="local-board">
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                    </div>
-                    <!-- board 8 : won by O -->
-                    <div class="local-board local-board--won-o">
-                      <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
-                      <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"><svg><use href="#glyph-x"/></svg></div><div class="cell"></div>
-                      <div class="cell"><svg><use href="#glyph-o"/></svg></div><div class="cell"></div><div class="cell"></div>
-                    </div>
-                    <!-- board 9 -->
-                    <div class="local-board">
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"><svg><use href="#glyph-x"/></svg></div>
-                      <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-                    </div>
+                    <p class="device__hud device__hud--bottom" aria-hidden="true"><span><svg viewBox="0 0 40 40"><use href="#glyph-x"/></svg>1</span><span>draws 0</span><span><svg viewBox="0 0 40 40"><use href="#glyph-o"/></svg>1</span></p>
                   </div>
-                  <p class="device__hud device__hud--bottom" aria-hidden="true"><span><svg viewBox="0 0 40 40"><use href="#glyph-x"/></svg>1</span><span>draws 0</span><span><svg viewBox="0 0 40 40"><use href="#glyph-o"/></svg>1</span></p>
+                </div>
+                <div class="device__back" aria-hidden="true">
+                  <span class="device__camera"><i></i><i></i></span>
+                  <svg class="device__logo" viewBox="0 0 40 40"><use href="#glyph-x"/></svg>
                 </div>
                 <span class="device__stand" aria-hidden="true"></span>
               </div>

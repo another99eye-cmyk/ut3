@@ -9,9 +9,10 @@
 
 .device-stage {
   --loop: 16s;
-  /* spin axis for the two full turns: "0 0 1" spins the device in the screen
-     plane (z axis). Use "0 1 0" for a coin-style flip around the y axis. */
-  --spin-axis: 0 0 1;
+  /* axis for the two full turns. "1 0 0" (x axis) flips the device top-over-bottom
+     so you see its back halfway through. "0 1 0" flips it sideways (y axis),
+     "0 0 1" just spins it flat in the screen plane (z axis). */
+  --spin-axis: 1 0 0;
   --phone-w: 17em;  --phone-h: 29em;  --phone-r: 2.6em;
   --mon-w: 30em;    --mon-h: 20em;    --mon-r: 1em;
 
@@ -21,7 +22,6 @@
   width: 100%;
   height: calc(var(--phone-h) + 3em);
   font-size: min(16px, 3vw);   /* everything below is in em, so the whole device scales together */
-  perspective: 1400px;
 }
 
 .device-stage__float {
@@ -29,23 +29,68 @@
   place-items: center;
   width: 100%;
   height: 100%;
+  perspective: 80em;   /* depth for the x-axis flip */
   animation: device-float 6s ease-in-out infinite;
 }
 
-.device { display: grid; place-items: center; animation: device-turn var(--loop) ease-in-out infinite; }
+.device {
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  animation: device-turn var(--loop) ease-in-out infinite;
+}
 
 /* ---- the shell: phone by default, reshaped to a monitor by the keyframes ---- */
 .device__shell {
   position: relative;
-  display: flex;
   width: var(--phone-w);
   height: var(--phone-h);
-  padding: .7em;
-  border: var(--border-w-lg) solid var(--line);
   border-radius: var(--phone-r);
-  background: var(--paper);
+  transform-style: preserve-3d;
   animation: device-shape var(--loop) infinite;
 }
+
+/* two faces back to back: the front (screen) and the back (camera + logo).
+   Each hides itself when it faces away, so a full flip shows the back. */
+.device__front,
+.device__back {
+  position: absolute;
+  inset: 0;
+  border: var(--border-w-lg) solid var(--line);
+  border-radius: inherit;
+  background: var(--paper);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.device__front { display: flex; padding: .7em; }
+
+.device__back {
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  transform: rotateX(180deg);
+}
+.device__logo {
+  width: 6em;
+  height: 6em;
+  padding: 1em;
+  border: 3px solid var(--line);
+  border-radius: 1.2em;
+  background: var(--paper);
+}
+.device__camera {
+  position: absolute;
+  top: 1.3em;
+  left: 1.3em;
+  display: grid;
+  gap: .5em;
+  padding: .7em;
+  border: 3px solid var(--line);
+  border-radius: 1.2em;
+  background: var(--paper);
+  animation: device-fade var(--loop) infinite;   /* phone only */
+}
+.device__camera i { width: 1.4em; height: 1.4em; border-radius: 50%; background: var(--line); }
 
 .device__notch {
   position: absolute;
@@ -84,6 +129,7 @@
   width: 7em;
   height: 3.2em;
   margin: -.2em 0 0 -3.5em;
+  translate: 0 0 -2px;
   transform-origin: 50% 0;
   scale: 1 0;
   opacity: 0;
