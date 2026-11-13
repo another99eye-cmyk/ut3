@@ -9,10 +9,10 @@
 
 .device-stage {
   --loop: 16s;
-  /* axis for the two full turns. "1 0 0" (x axis) flips the device top-over-bottom
-     so you see its back halfway through. "0 1 0" flips it sideways (y axis),
-     "0 0 1" just spins it flat in the screen plane (z axis). */
-  --spin-axis: 1 0 0;
+  /* axis for the two full turns. "0 1 0" (y axis) turns the device sideways like a
+     coin, so you see its back halfway through. If you change this, also change the
+     rotateY(180deg) on .device__back to match: "1 0 0" (x axis) needs rotateX(180deg). */
+  --spin-axis: 0 1 0;
   --phone-w: 17em;  --phone-h: 29em;  --phone-r: 2.6em;
   --mon-w: 30em;    --mon-h: 20em;    --mon-r: 1em;
 
@@ -29,7 +29,7 @@
   place-items: center;
   width: 100%;
   height: 100%;
-  perspective: 80em;   /* depth for the x-axis flip */
+  perspective: 80em;   /* depth for the flip */
   animation: device-float 6s ease-in-out infinite;
 }
 
@@ -68,7 +68,7 @@
   display: grid;
   place-items: center;
   background: var(--accent);
-  transform: rotateX(180deg);
+  transform: rotateY(180deg);
 }
 .device__logo {
   width: 6em;
