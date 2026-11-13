@@ -1,6 +1,5 @@
 /* ==========================================================================
-   main.js — landing page UI logic (theme, mode/symbol/difficulty selection,
-   win board)
+   main.js — landing page UI logic (theme, mode cards + pop-ups, win board)
    ========================================================================== */
 
 (function () {
@@ -33,125 +32,164 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* mode + symbol + difficulty selection                              */
+  /* mode cards + pop-ups                                              */
+  /*   Two Player -> starts straight away                              */
+  /*   Play the AI -> pop-up: side + difficulty -> Start game          */
+  /*   Online      -> pop-up: create a room / join with a code         */
   /* ---------------------------------------------------------------- */
+
+  function openDialog(dialog) {
+    if (!dialog) return;
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+  }
+
+  function initDialogClosing() {
+    document.querySelectorAll(".mode-dialog").forEach(function (dialog) {
+      dialog.querySelectorAll("[data-close]").forEach(function (btn) {
+        btn.addEventListener("click", function () { dialog.close(); });
+      });
+      // The card fills the whole dialog box, so a click that lands on the
+      // dialog itself is a click on the dimmed backdrop.
+      dialog.addEventListener("click", function (e) {
+        if (e.target === dialog) dialog.close();
+      });
+    });
+  }
 
   function initModePicker() {
     var cards = document.querySelectorAll(".mode-card");
     if (!cards.length) return;
 
     var settings = window.TTTStorage.getSettings();
-    var symbolChips = document.querySelectorAll(".chip[data-symbol]");
-    var difficultyChips = document.querySelectorAll(".chip[data-difficulty]");
+    var aiDialog = document.getElementById("ai-dialog");
+    var onlineDialog = document.getElementById("online-dialog");
 
-    function selectCard(card) {
-      cards.forEach(function (c) {
-        c.setAttribute("aria-pressed", String(c === card));
-      });
-      settings.mode = card.dataset.mode;
-      if (card.dataset.mode === "ai" && !settings.difficulty) {
-        settings.difficulty = "medium";
-      }
+    function save(mode) {
+      settings.mode = mode;
       window.TTTStorage.setSettings(settings);
-      syncChips();
-      updateCta();
     }
 
-    function syncChips() {
+    function goTo(params) {
+      window.location.href = "pages/game.html?" + params.toString();
+    }
+
+    /* ---- Play the AI pop-up ---- */
+    var symbolChips = aiDialog ? aiDialog.querySelectorAll(".chip[data-symbol]") : [];
+    var difficultyChips = aiDialog ? aiDialog.querySelectorAll(".chip[data-difficulty]") : [];
+    var levelHint = document.getElementById("ai-level-hint");
+    var startBtn = document.getElementById("ai-start-btn");
+
+    function syncAiChips() {
+      var level = settings.difficulty || "medium";
+      var side = settings.playerSymbol === "O" ? "O" : "X";
       difficultyChips.forEach(function (c) {
-        c.setAttribute("aria-pressed", String(c.dataset.difficulty === settings.difficulty));
+        var on = c.dataset.difficulty === level;
+        c.setAttribute("aria-pressed", String(on));
+        if (on && levelHint) levelHint.textContent = c.dataset.hint || "";
       });
       symbolChips.forEach(function (c) {
-        c.setAttribute("aria-pressed", String(c.dataset.symbol === settings.playerSymbol));
+        c.setAttribute("aria-pressed", String(c.dataset.symbol === side));
       });
     }
 
-    cards.forEach(function (card) {
-      card.addEventListener("click", function () { selectCard(card); });
-      card.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          selectCard(card);
-        }
-      });
-    });
-
     difficultyChips.forEach(function (chip) {
-      chip.addEventListener("click", function (e) {
-        e.stopPropagation();
-        difficultyChips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
-        chip.setAttribute("aria-pressed", "true");
+      chip.addEventListener("click", function () {
         settings.difficulty = chip.dataset.difficulty;
         window.TTTStorage.setSettings(settings);
-        updateCta();
+        syncAiChips();
       });
     });
 
     symbolChips.forEach(function (chip) {
-      chip.addEventListener("click", function (e) {
-        e.stopPropagation();
-        symbolChips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
-        chip.setAttribute("aria-pressed", "true");
+      chip.addEventListener("click", function () {
         settings.playerSymbol = chip.dataset.symbol;
         window.TTTStorage.setSettings(settings);
-        updateCta();
+        syncAiChips();
       });
     });
 
-    // restore previous selection, if any (selectCard also syncs the chip rows)
-    var savedCard = document.querySelector('.mode-card[data-mode="' + settings.mode + '"]');
-    if (savedCard) selectCard(savedCard);
-
-    function updateCta() {
-      var cta = document.querySelector(".mode-picker__cta");
-      if (!cta) return;
-      // The Online card has its own Create/Join actions instead of a
-      // generic Start button.
-      cta.hidden = settings.mode === "online";
-      if (cta.hidden) return;
-      var link = cta.querySelector("a");
-      var params = new URLSearchParams();
-      params.set("mode", settings.mode);
-      if (settings.mode === "ai") {
+    if (startBtn) {
+      startBtn.addEventListener("click", function () {
+        save("ai");
+        var params = new URLSearchParams();
+        params.set("mode", "ai");
         params.set("difficulty", settings.difficulty || "medium");
-        params.set("symbol", settings.playerSymbol || "X");
-      }
-      link.href = "pages/game.html?" + params.toString();
+        params.set("symbol", settings.playerSymbol === "O" ? "O" : "X");
+        goTo(params);
+      });
     }
-  }
 
-  /* ---------------------------------------------------------------- */
-  /* online mode — create/join room controls on the Online card        */
-  /* ---------------------------------------------------------------- */
+    /* ---- the three cards ---- */
+    function activate(card) {
+      var mode = card.dataset.mode;
+      if (mode === "ai") {
+        syncAiChips();
+        openDialog(aiDialog);
+      } else if (mode === "online") {
+        resetJoinError();
+        openDialog(onlineDialog);
+      } else {
+        save("two-player");
+        var params = new URLSearchParams();
+        params.set("mode", "two-player");
+        goTo(params);
+      }
+    }
 
-  function initOnlinePanel() {
+    cards.forEach(function (card) {
+      card.addEventListener("click", function () { activate(card); });
+      card.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          activate(card);
+        }
+      });
+    });
+
+    /* ---- Online pop-up ---- */
     var createBtn = document.getElementById("create-room-btn");
     var joinBtn = document.getElementById("join-room-btn");
     var codeInput = document.getElementById("join-room-code");
-    if (!createBtn || !joinBtn || !codeInput || !window.TTTOnline) return;
+    var joinError = document.getElementById("join-error");
 
-    createBtn.addEventListener("click", function () {
-      var code = window.TTTOnline.randomRoomCode();
-      window.location.href = "pages/game.html?mode=online&role=host&room=" + code;
-    });
-
-    function attemptJoin() {
-      var code = window.TTTOnline.normalizeCode(codeInput.value);
-      if (!code) {
-        codeInput.focus();
-        if (window.TTTAnimation) window.TTTAnimation.shakeCell(codeInput);
-        return;
-      }
-      window.location.href = "pages/game.html?mode=online&role=guest&room=" + code;
+    function resetJoinError() {
+      if (joinError) { joinError.hidden = true; joinError.textContent = ""; }
     }
 
-    joinBtn.addEventListener("click", attemptJoin);
-    codeInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        attemptJoin();
-      }
-    });
+    if (createBtn && joinBtn && codeInput && window.TTTOnline) {
+      createBtn.addEventListener("click", function () {
+        save("online");
+        var code = window.TTTOnline.randomRoomCode();
+        window.location.href = "pages/game.html?mode=online&role=host&room=" + code;
+      });
+
+      var attemptJoin = function () {
+        var code = window.TTTOnline.normalizeCode(codeInput.value);
+        if (!code) {
+          if (joinError) {
+            joinError.textContent = "Enter the room code your friend sent you.";
+            joinError.hidden = false;
+          }
+          codeInput.focus();
+          if (window.TTTAnimation) window.TTTAnimation.shakeCell(codeInput);
+          return;
+        }
+        save("online");
+        window.location.href = "pages/game.html?mode=online&role=guest&room=" + code;
+      };
+
+      joinBtn.addEventListener("click", attemptJoin);
+      codeInput.addEventListener("input", resetJoinError);
+      codeInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          attemptJoin();
+        }
+      });
+    }
+
+    initDialogClosing();
   }
 
   /* ---------------------------------------------------------------- */
@@ -187,7 +225,6 @@
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
     initModePicker();
-    initOnlinePanel();
     renderWinBoard();
     if (window.TTTAnimation) window.TTTAnimation.init();
   });
@@ -195,6 +232,10 @@
   // Re-render if the page is restored from the back/forward cache after a
   // match on game.html — DOMContentLoaded won't fire again in that case.
   window.addEventListener("pageshow", function (e) {
-    if (e.persisted) renderWinBoard();
+    if (e.persisted) {
+      renderWinBoard();
+      // Coming back with the browser's Back button: start from a clean page.
+      document.querySelectorAll("dialog[open]").forEach(function (d) { d.close(); });
+    }
   });
 })();

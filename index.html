@@ -289,69 +289,93 @@
     <div class="wrap">
       <div class="section__head" data-reveal>
         <h2>Who are you playing today?</h2>
-        <p>Choose a mode below. We'll remember your pick and take you straight to the board.</p>
+        <p>Tap a mode to get started. Games against the AI or a friend online ask a quick question or two first.</p>
       </div>
 
       <div class="mode-cards" data-reveal-group>
-        <div class="mode-card" data-mode="two-player" role="button" tabindex="0" aria-pressed="false" data-reveal>
+        <div class="mode-card" data-mode="two-player" role="button" tabindex="0" data-reveal>
           <div class="mode-card__pieces" aria-hidden="true">
             <svg><use href="#glyph-x"/></svg><svg><use href="#glyph-o"/></svg>
           </div>
           <span class="mode-card__badge">local · 2 players</span>
           <h3>Two Player</h3>
           <p>One device, two players. Take turns and see who has the better plan.</p>
+          <span class="mode-card__go">Start playing <span aria-hidden="true">&rarr;</span></span>
         </div>
 
-        <div class="mode-card" data-mode="ai" role="button" tabindex="0" aria-pressed="false" data-reveal>
+        <div class="mode-card" data-mode="ai" role="button" tabindex="0" aria-haspopup="dialog" data-reveal>
           <div class="mode-card__pieces" aria-hidden="true">
             <svg><use href="#glyph-x"/></svg>
           </div>
           <span class="mode-card__badge">vs computer</span>
           <h3>Play the AI</h3>
           <p>Pick your side and a difficulty, then see if you can outsmart the computer.</p>
-
-          <div class="difficulty-panel">
-            <div class="difficulty-panel__inner">
-              <div class="chip-row" role="group" aria-label="Play as">
-                <button type="button" class="chip" data-symbol="X" aria-pressed="true">Play as X</button>
-                <button type="button" class="chip" data-symbol="O" aria-pressed="false">Play as O</button>
-              </div>
-              <div class="chip-row chip-row--difficulty" role="group" aria-label="AI difficulty">
-                <button type="button" class="chip" data-difficulty="easy" aria-pressed="false">Easy</button>
-                <button type="button" class="chip" data-difficulty="medium" aria-pressed="false">Medium</button>
-                <button type="button" class="chip" data-difficulty="hard" aria-pressed="false">Hard</button>
-              </div>
-            </div>
-          </div>
+          <span class="mode-card__go">Choose side &amp; level <span aria-hidden="true">&rarr;</span></span>
         </div>
 
-        <div class="mode-card" data-mode="online" role="button" tabindex="0" aria-pressed="false" data-reveal>
+        <div class="mode-card" data-mode="online" role="button" tabindex="0" aria-haspopup="dialog" data-reveal>
           <div class="mode-card__pieces" aria-hidden="true">
             <svg><use href="#glyph-x"/></svg><svg><use href="#glyph-o"/></svg>
           </div>
           <span class="mode-card__badge">play a friend, anywhere</span>
           <h3>Online</h3>
           <p>Make a room and send the link to a friend, or join one they sent you. No sign-up needed.</p>
-
-          <div class="difficulty-panel">
-            <div class="difficulty-panel__inner">
-              <div class="online-panel">
-                <button type="button" class="btn btn--primary online-panel__create" id="create-room-btn">Create a room</button>
-                <div class="online-panel__divider"><span>or join one</span></div>
-                <div class="online-panel__join">
-                  <input type="text" id="join-room-code" class="online-panel__input" placeholder="Room code" maxlength="6" autocomplete="off" spellcheck="false" aria-label="Room code">
-                  <button type="button" class="btn" id="join-room-btn">Join</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <span class="mode-card__go">Create or join a room <span aria-hidden="true">&rarr;</span></span>
         </div>
       </div>
-
-      <div class="mode-picker__cta">
-        <a class="btn btn--primary" href="pages/game.html?mode=two-player">Start game</a>
-      </div>
     </div>
+
+    <!-- Pop-up: Play the AI -->
+    <dialog class="mode-dialog" id="ai-dialog" aria-labelledby="ai-dialog-title">
+      <div class="mode-dialog__card">
+        <button type="button" class="mode-dialog__close" data-close aria-label="Close">&times;</button>
+        <span class="mode-card__badge">vs computer</span>
+        <h3 id="ai-dialog-title">Play the AI</h3>
+        <p class="mode-dialog__lede">Pick your side and how tough you want the opponent to be.</p>
+
+        <div class="mode-dialog__group" role="group" aria-labelledby="ai-side-label">
+          <span class="mode-dialog__label" id="ai-side-label">Play as</span>
+          <div class="chip-row">
+            <button type="button" class="chip" data-symbol="X" aria-pressed="true">Play as X</button>
+            <button type="button" class="chip" data-symbol="O" aria-pressed="false">Play as O</button>
+          </div>
+          <p class="mode-dialog__hint">X moves first.</p>
+        </div>
+
+        <div class="mode-dialog__group" role="group" aria-labelledby="ai-level-label">
+          <span class="mode-dialog__label" id="ai-level-label">Difficulty</span>
+          <div class="chip-row">
+            <button type="button" class="chip" data-difficulty="easy" data-hint="Relaxed. A good way to learn the rules." aria-pressed="false">Easy</button>
+            <button type="button" class="chip" data-difficulty="medium" data-hint="A fair fight." aria-pressed="true">Medium</button>
+            <button type="button" class="chip" data-difficulty="hard" data-hint="Expect a real challenge." aria-pressed="false">Hard</button>
+          </div>
+          <p class="mode-dialog__hint" id="ai-level-hint" aria-live="polite"></p>
+        </div>
+
+        <button type="button" class="btn btn--primary mode-dialog__go" id="ai-start-btn" autofocus>Start game</button>
+      </div>
+    </dialog>
+
+    <!-- Pop-up: Online -->
+    <dialog class="mode-dialog" id="online-dialog" aria-labelledby="online-dialog-title">
+      <div class="mode-dialog__card">
+        <button type="button" class="mode-dialog__close" data-close aria-label="Close">&times;</button>
+        <span class="mode-card__badge">play a friend, anywhere</span>
+        <h3 id="online-dialog-title">Play online</h3>
+        <p class="mode-dialog__lede">Start a room and send the link to a friend, or join the room they made.</p>
+
+        <div class="online-panel">
+          <button type="button" class="btn btn--primary online-panel__create" id="create-room-btn" autofocus>Create a room</button>
+          <p class="mode-dialog__hint">You'll get a code and a link to share.</p>
+          <div class="online-panel__divider"><span>or join one</span></div>
+          <div class="online-panel__join">
+            <input type="text" id="join-room-code" class="online-panel__input" placeholder="Room code" maxlength="6" autocomplete="off" spellcheck="false" aria-label="Room code" aria-describedby="join-error">
+            <button type="button" class="btn" id="join-room-btn">Join</button>
+          </div>
+          <p class="mode-dialog__error" id="join-error" role="alert" hidden></p>
+        </div>
+      </div>
+    </dialog>
   </section>
 
   <!-- ============================================================ -->

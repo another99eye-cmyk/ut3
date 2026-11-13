@@ -25,6 +25,8 @@
   .rule { padding: 1.4rem 1.2rem; }
   .rule__figs { gap: 1.2rem; }
   .feedback-card { padding: 1.4rem 1.1rem; }
+  .mode-dialog__card { padding: 1.7rem 1.3rem 1.4rem; }
+  .mode-dialog__card h3 { font-size: 1.6rem; }
 
   .mode-cards { grid-template-columns: 1fr; }
   .mode-card__pieces { position: static; margin-bottom: 1rem; }

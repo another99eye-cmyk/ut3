@@ -179,3 +179,6 @@ C. [ ] TESTED: refreshing mid-game restarts the whole game in every mode
        needs the host to re-sync with the guest, so it's harder).
 D. [ ] Check how strong the highlight on the active small board is, so
        players can always see where they must play.
+E. [x] DONE: Mode cards on index.html now open separate pop-ups (AI: side +
+       difficulty; Online: create / join). Two Player starts straight away.
+       The old bottom "Start game" button was removed.

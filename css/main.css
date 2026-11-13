@@ -471,8 +471,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .mode-card:hover { transform: translate(-3px, -3px); box-shadow: 10px 10px 0 rgb(var(--shadow-color) / 1); }
 
-.mode-card[aria-pressed="true"] {
-  background: var(--accent);
+.mode-card:active {
   transform: translate(3px, 3px);
   box-shadow: 3px 3px 0 rgb(var(--shadow-color) / 1);
 }
@@ -487,11 +486,24 @@ button { font-family: inherit; cursor: pointer; }
   margin-bottom: 1rem;
   background: var(--bg);
 }
-.mode-card[aria-pressed="true"] .mode-card__badge { background: var(--paper); }
 
 .mode-card h3 { font-size: 1.5rem; margin-bottom: .5rem; }
 .mode-card p { color: var(--ink-soft); font-size: .98rem; max-width: 32ch; }
-.mode-card[aria-pressed="true"] p { color: var(--ink); }
+
+.mode-card__go {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin-top: 1.3rem;
+  font-family: var(--font-mono);
+  font-size: .88rem;
+  font-weight: 600;
+  padding-bottom: .15rem;
+  border-bottom: 3px solid var(--accent);
+}
+.mode-card__go span { display: inline-block; transition: transform .15s ease; }
+.mode-card:hover .mode-card__go span,
+.mode-card:focus-visible .mode-card__go span { transform: translateX(5px); }
 
 .mode-card__pieces {
   position: absolute;
@@ -501,15 +513,6 @@ button { font-family: inherit; cursor: pointer; }
 }
 .mode-card__pieces svg { width: 2rem; height: 2rem; }
 .mode-card__pieces svg:last-child { margin-left: -.6rem; }
-
-.difficulty-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows .35s ease;
-  margin-top: 1.5rem;
-}
-.difficulty-panel__inner { overflow: hidden; }
-.mode-card[aria-pressed="true"] .difficulty-panel { grid-template-rows: 1fr; }
 
 .chip-row {
   display: flex;
@@ -534,14 +537,86 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--bg);
 }
 
-.mode-picker__cta {
-  display: flex;
-  justify-content: center;
-  margin-top: 2.75rem;
+/* -------------------------------------------------------------------- */
+/* mode pop-ups (Play the AI / Play online)                              */
+/* -------------------------------------------------------------------- */
+
+.mode-dialog {
+  width: min(460px, calc(100vw - 2rem));
+  max-width: none;
+  padding: 0;
+  margin: auto;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  overflow: visible;
+}
+.mode-dialog::backdrop { background: color-mix(in srgb, var(--ink) 55%, transparent); }
+
+.mode-dialog__card {
+  position: relative;
+  display: grid;
+  gap: 1.1rem;
+  justify-items: start;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: 2.1rem 1.9rem 1.8rem;
+  background: var(--paper);
+  border: var(--border-w-lg) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--hard-shadow);
+}
+.mode-dialog__card .mode-card__badge { margin-bottom: 0; }
+.mode-dialog__card h3 { font-size: 1.9rem; }
+.mode-dialog__lede { color: var(--ink-soft); }
+
+.mode-dialog__close {
+  position: absolute;
+  top: .9rem;
+  right: .9rem;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0 0 .15rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--ink);
+  border: var(--border-w) solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: var(--hard-shadow-sm);
+  transition: transform .15s ease;
+}
+.mode-dialog__close:hover { transform: translate(-1px, -1px); }
+.mode-dialog__close:active { transform: translate(1px, 1px); box-shadow: none; }
+
+.mode-dialog__group { display: grid; gap: .55rem; width: 100%; }
+.mode-dialog__label { font-family: var(--font-mono); font-weight: 600; font-size: .85rem; }
+.mode-dialog__hint { min-height: 1.4em; font-size: .9rem; color: var(--ink-soft); }
+.mode-dialog .chip-row { padding-top: 0; }
+.mode-dialog .chip { padding: .6rem 1.1rem; }
+.mode-dialog__go { width: 100%; justify-content: center; }
+
+.mode-dialog__error {
+  padding: .55rem .8rem;
+  border: 2px solid var(--x-color);
+  border-radius: var(--radius-sm);
+  background: var(--x-color-soft);
+  font-size: .9rem;
+}
+.mode-dialog__error[hidden] { display: none; }
+
+/* no page scrolling behind an open pop-up */
+body:has(dialog[open]) { overflow: hidden; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mode-dialog[open] .mode-dialog__card { animation: overlay-card-in .3s var(--ease-pop, ease) both; }
+  .mode-dialog[open]::backdrop { animation: overlay-fade-in .2s ease both; }
 }
 
 /* -------------------------------------------------------------------- */
-/* online panel (inside the Online mode-card)                            */
+/* online panel (inside the Online pop-up)                              */
 /* -------------------------------------------------------------------- */
 
 .online-panel {
