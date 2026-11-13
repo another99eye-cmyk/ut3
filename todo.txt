@@ -108,7 +108,7 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
    - Do the background music first, the win/draw/lose sounds second.
 
 
-5. [ ] Loader for index.html and game.html                            (Effort: M)
+5. [x] DONE: Loader for index.html and game.html                      (Effort: M)
    - UTTT-themed: e.g. a mini 3x3-of-3x3 board where X and O draw in one
      by one, reusing the existing glyph-x / glyph-o SVG symbols and theme
      colors (so it works in light and dark mode).
@@ -128,7 +128,7 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
      readers once finished.
 
 
-6. [ ] Scroll-aware header                                             (Effort: S)
+6. [x] DONE: Scroll-aware header                                      (Effort: S)
    - The header (.site-header in css/main.css) is already sticky with a
      blur. Add: hide on scroll down, reappear on scroll up, and change
      background opacity / shrink when not at the top.
@@ -139,13 +139,17 @@ Legend: [ ] not started   Effort: S = under 1 hour, M = a few hours, L = a day o
    - Respect prefers-reduced-motion.
 
 
-7. [ ] Skeleton / spinner states for real waiting moments              (Effort: S)
+7. [x] DONE: Spinner states for real waiting moments                  (Effort: S)
    Note: the site is static, so there is little content to wait for.
    Use loading states only where there is a real wait:
    - Online mode "Connecting..." overlay (room creation / joining).
    - Google Fonts: add font-display: swap so text doesn't flash or block.
    - AI "thinking" indicator, if it isn't already visible.
    (Item 5, the page loader, covers the general page load.)
+   RESULT: online connecting/joining/waiting overlay now shows a spinner,
+   and "AI is thinking" has animated dots. Fonts already use
+   display=swap. No skeleton screens were needed: nothing on the site
+   loads data from a server, so there is no content to hold a place for.
 
 
 8. [ ] Graphics and visual refresh                                    (Effort: L)

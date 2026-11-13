@@ -18,6 +18,9 @@
   })();
 </script>
 
+<link rel="stylesheet" href="css/loader.css" />
+<noscript><style>.page-loader { display: none !important; }</style></noscript>
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -28,6 +31,26 @@
 <link rel="stylesheet" href="css/responsive.css" />
 </head>
 <body>
+
+<!-- page loader: hidden by js/loader.js once the page is ready -->
+<div class="page-loader" id="page-loader" role="status" aria-live="polite">
+  <div class="page-loader__inner">
+    <svg class="page-loader__board" viewBox="0 0 120 120" aria-hidden="true">
+      <path class="ld-grid" pathLength="100" d="M40 8V112M80 8V112M8 40H112M8 80H112"/>
+      <path class="ld-mini" pathLength="100" d="M53.3 45V75M66.7 45V75M45 53.3H75M45 66.7H75"/>
+      <path class="ld-x ld-pop" style="--d:0s" d="M12 12L28 28M28 12L12 28"/>
+      <circle class="ld-o ld-pop" style="--d:.12s" cx="100" cy="100" r="9"/>
+      <path class="ld-x ld-pop" style="--d:.24s" d="M92 12L108 28M108 12L92 28"/>
+      <circle class="ld-o ld-pop" style="--d:.36s" cx="20" cy="100" r="9"/>
+      <path class="ld-x ld-x--s ld-pop" style="--d:.48s" d="M47.5 47.5L52.5 52.5M52.5 47.5L47.5 52.5"/>
+      <circle class="ld-o ld-o--s ld-pop" style="--d:.6s" cx="60" cy="60" r="3"/>
+      <path class="ld-x ld-x--s ld-pop" style="--d:.72s" d="M67.5 67.5L72.5 72.5M72.5 67.5L67.5 72.5"/>
+    </svg>
+    <p class="page-loader__brand">XT&sup3;</p>
+    <p class="page-loader__text">Setting up the boards<span class="page-loader__dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></p>
+  </div>
+</div>
+<script src="js/loader.js"></script>
 
 <!-- reusable piece glyphs -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">

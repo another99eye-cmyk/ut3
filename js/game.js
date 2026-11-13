@@ -226,6 +226,7 @@ window.TTTGame = window.TTTGame || {};
     pauseRestartBtn: document.getElementById("pause-restart-btn"),
     pauseMenuBtn: document.getElementById("pause-menu-btn"),
     onlineOverlay: document.getElementById("online-overlay"),
+    onlineIcon: document.getElementById("online-icon"),
     onlineTitle: document.getElementById("online-title"),
     onlineSub: document.getElementById("online-sub"),
     onlineRoomCodeWrap: document.getElementById("online-room-code"),
@@ -378,12 +379,14 @@ window.TTTGame = window.TTTGame || {};
   }
 
   function renderTurn() {
+    els.turnLabel.classList.remove("is-thinking");
     if (engine.globalStatus) {
       els.turnLabel.textContent = "Game over";
     } else if (mode === "ai") {
-      els.turnLabel.textContent = engine.currentPlayer === aiSymbol
-        ? "AI is thinking\u2026"
-        : "Your turn";
+      var aiTurn = engine.currentPlayer === aiSymbol;
+      els.turnLabel.textContent = aiTurn ? "AI is thinking" : "Your turn";
+      // the animated dots after "thinking" come from CSS (.is-thinking)
+      els.turnLabel.classList.toggle("is-thinking", aiTurn);
     } else if (mode === "online") {
       if (!onlineConnected) {
         els.turnLabel.textContent = "Waiting to connect\u2026";
@@ -796,8 +799,12 @@ window.TTTGame = window.TTTGame || {};
      there's nothing to reconcile — whatever arrives just gets replayed
      through the normal commitMove()/newGame() paths. ---------- */
 
-  function showOnlineOverlay(title, sub, code) {
+  /** `busy` = we're waiting on something (connecting, or waiting for the
+   *  friend to join): show a spinner instead of the static globe icon. */
+  function showOnlineOverlay(title, sub, code, busy) {
     if (!els.onlineOverlay) return;
+    if (els.onlineIcon) els.onlineIcon.classList.toggle("is-loading", !!busy);
+    els.onlineOverlay.setAttribute("aria-busy", String(!!busy));
     els.onlineTitle.textContent = title;
     els.onlineSub.textContent = sub;
     if (code) {
@@ -852,7 +859,7 @@ window.TTTGame = window.TTTGame || {};
 
     onlineRoom = window.TTTOnline.createRoom({
       onHosted: function (code) {
-        showOnlineOverlay("Your room is ready", "Send this code or link to a friend. The game starts as soon as they join.", code);
+        showOnlineOverlay("Your room is ready", "Send this code or link to a friend. The game starts as soon as they join.", code, true);
       },
       onConnected: function () {
         onlineConnected = true;
@@ -878,10 +885,10 @@ window.TTTGame = window.TTTGame || {};
     });
 
     if (onlineRole === "host") {
-      showOnlineOverlay("Setting up your room\u2026", "This only takes a second.", null);
+      showOnlineOverlay("Setting up your room\u2026", "This only takes a second.", null, true);
       onlineRoom.host(onlineRoomCode);
     } else {
-      showOnlineOverlay("Joining room " + onlineRoomCode + "\u2026", "Connecting to your friend.", null);
+      showOnlineOverlay("Joining room " + onlineRoomCode + "\u2026", "Connecting to your friend.", null, true);
       onlineRoom.join(onlineRoomCode);
     }
   }

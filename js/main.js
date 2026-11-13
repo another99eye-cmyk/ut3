@@ -32,6 +32,52 @@
   }
 
   /* ---------------------------------------------------------------- */
+  /* scroll-aware header                                               */
+  /*   - shrinks and firms up after a little scrolling                 */
+  /*   - slides away while scrolling down, returns on scroll up        */
+  /* ---------------------------------------------------------------- */
+
+  function initScrollHeader() {
+    var header = document.querySelector(".site-header");
+    if (!header) return;
+
+    var SHRINK_AT = 24;   // px scrolled before the header shrinks
+    var HIDE_AFTER = 160; // px scrolled before it may hide
+    var DELTA = 8;        // ignore tiny movements so it doesn't flicker
+    var lastY = Math.max(0, window.scrollY);
+    var ticking = false;
+
+    function update() {
+      ticking = false;
+      var y = Math.max(0, window.scrollY); // iOS can report negative values while bouncing
+      header.classList.toggle("is-scrolled", y > SHRINK_AT);
+
+      var diff = y - lastY;
+      if (Math.abs(diff) >= DELTA) {
+        if (diff > 0 && y > HIDE_AFTER && !header.contains(document.activeElement)) {
+          header.classList.add("is-hidden");
+        } else if (diff < 0) {
+          header.classList.remove("is-hidden");
+        }
+        lastY = y;
+      }
+      if (y <= SHRINK_AT) header.classList.remove("is-hidden");
+    }
+
+    window.addEventListener("scroll", function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    }, { passive: true });
+
+    // Tabbing into the header with the keyboard always brings it back.
+    header.addEventListener("focusin", function () { header.classList.remove("is-hidden"); });
+
+    update();
+  }
+
+  /* ---------------------------------------------------------------- */
   /* mode cards + pop-ups                                              */
   /*   Two Player -> starts straight away                              */
   /*   Play the AI -> pop-up: side + difficulty -> Start game          */
@@ -224,6 +270,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
+    initScrollHeader();
     initModePicker();
     renderWinBoard();
     if (window.TTTAnimation) window.TTTAnimation.init();

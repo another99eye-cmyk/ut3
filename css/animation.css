@@ -51,6 +51,15 @@
   100% { transform: translateY(240px) translateX(var(--drift, 0px)) rotate(var(--rot, 180deg)); opacity: 0; }
 }
 
+@keyframes spinner-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes think-dots {
+  from { width: 0; }
+  to { width: 1.2em; }
+}
+
 @keyframes overlay-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
